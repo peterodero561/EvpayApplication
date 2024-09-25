@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My EVPay Account</title>
+    <link rel="stylesheet" href="../static/styles/account_owners.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="#" class="back-button" onclick="goBack()">&larr;</a>
+            <h1 class="title">My EVPay Account</h1>
+        </header>
+        <main>
+            <section class="account-section">
+                <h2 class="section-title">Account Information</h2>
+                <p><strong>Account Type:</strong> EV Owner</p>
+                <p><strong>Name:</strong> Dorwin Glen</p>
+                <p><strong>Email:</strong> dorwinglen@example.com</p>
+            </section>
+
+            <section class="balance-section">
+                <h2 class="section-title">EV Balance</h2>
+                <p><strong>Current Balance:</strong> $200</p>
+                <div class="balance-actions">
+                    <button class="btn primary-btn" onclick="topUpBalance()">Top Up Balance</button>
+                    <button class="btn secondary-btn" onclick="payWithBalance()">Pay</button>
+                </div>
+            </section>
+
+            <section class="offers-section">
+                <h2 class="section-title">Available Offers</h2>
+                <ul>
+                    <li>10% off on next EV Battery Purchase</li>
+                    <!--<li>Free Charging for the first 2 hours</li>-->
+                    <li>20% discount on Maintenance Services</li>
+                </ul>
+            </section>
+
+            <section class="Schedule-section">
+                <h2 class="section-title">Schedules Information</h2>
+                <p>You have 3 upcoming maintenance schedules. Please visit the nearest EVGarage for more details.</p>
+            </section>
+        </main>
+    </div>
+
+    <script src="../static/scripts/account_owners.js"></script>
+</body>
+</html>
