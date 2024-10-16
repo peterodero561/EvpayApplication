@@ -1,12 +1,12 @@
-from ..extension import db
+from app.extensions import db
 from flask_login import UserMixin
 
-class Passenger(UserMixin, db.Model):
+class User(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String(50), nullable=False)
     user_email = db.Column(db.String(50), nullable=False, unique=True)
     user_password = db.Column(db.String(128), nullable=False)
-    user_role = db.Column(db.String(20), nullable=False)
+    user_role = db.Column(db.String(20), nullable=True)
 
     def __init__(self, id=None, name=None, email=None, passwd=None, role=None):
         self.user_id = id
