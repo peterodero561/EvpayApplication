@@ -1,17 +1,18 @@
-from flask import Blueprint, request, jsonify
 import base64
 import datetime
+from flask import Blueprint, request, jsonify
+import os
 import requests
 
 # initializing flask Blueprint for payments
 payments_bp = Blueprint('payments', __name__)
 
 # M-Pesa credentials
-CONSUMER_KEY = 'YOUR_CONSUMER_KEY'
-CONSUMER_SECRET = 'YOUR_CONSUMER_SECRET'
-SHORTCODE = 'YOUR_SHORTCODE'
-LIPA_NA_MPESA_ONLINE_PASSWORD = 'YOUR_LIPA_NA_MPESA_ONLINE_PASSWORD'
-CALLBACK_URL = 'YOUR_CALLBACK_URL'
+CONSUMER_KEY = os.environ('CONSUMER_KEY')
+CONSUMER_SECRET = os.environ('CONSUMER_SECRET')
+SHORTCODE = os.environ('SHORTCODE')
+LIPA_NA_MPESA_ONLINE_PASSWORD = os.environ('LIPA_NA_MPESA_ONLINE_PASSWORD')
+CALLBACK_URL = os.environ('CALLBACK_URL')
 BASE_URL = 'https://sandbox.safaricom.co.ke'
 
 # Function to get OAuth token
