@@ -3,6 +3,7 @@ import json
 from models.db import db
 
 class Garage(db.Model):
+    __tablename__ = 'garages'
     garId = db.Column(db.Integer, primary_key=True)
     garName = db.Column(db.String(50), nullable=False, unique=True)
     garLocation = db.Column(db.String(50), nullable=False, unique=True)

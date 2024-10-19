@@ -1,27 +1,34 @@
 from flask_sqlalchemy import SQLAlchemy
-from models.db import db
-
+from app.extensions import db
+from app.models.bus import Bus
+'''code for class Driver'''
 class Driver(db.Model):
-    driverId = db.Column(db.Integer, primary_key=True)
-    driverNo = db.Column(db.String(20), nullable=True)
-    driverName = db.Column(db.String(50), nullable=False)
-    driverEmail = db.Column(db.String(50), nullable=False, unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.userId'), nullable=False)
+    '''Class for creating the driver table in evpay_db'''
+    __tablename__ = 'drivers'
+    driver_id = db.Column(db.Integer, primary_key=True)
+    driver_no = db.Column(db.String(20), nullable=True)
+    driver_name = db.Column(db.String(50), nullable=False)
+    driver_email = db.Column(db.String(50), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     buses = db.relationship('Bus', backref='driver', lazy=True)
 
-    def __init__(self, Name, email, Number, id=None):
-        self.driverId = id
-        self.driverEmail = email
-        self.driverName = Name
-        self.driverNo = Number
+    def __init__(self, name, email, number, user_id, driver_id=None):
+        '''function to intialize class Driver'''
+        self.driver_id = driver_id
+        self.driver_email = email
+        self.driver_name = name
+        self.driver_no = number
+        self.user_id = user_id
 
     def __repr__(self):
-        return f'Driver(driverName:{self.driverName})'
+        '''function for the string representation of the Driver class'''
+        return f'Driver(driverName:{self.drive_name})'
     
     def to_dict(self):
+        '''function to return dictionary format of the driver instance'''
         return {
-            'driverId': self.driverId,
-            'driverName': self.driverName,
-            'driverEmail': self.driverEmail,
-            'driverNumber': self.driverNo
+            'driverId': self.drive_id,
+            'driverName': self.driver_name,
+            'driverEmail': self.driver_email,
+            'driverNumber': self.driver_no
         }
