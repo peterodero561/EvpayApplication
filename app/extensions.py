@@ -11,3 +11,5 @@ migrate = Migrate()
 def load_user(user_id):
     from app.models.user import User
     return User.query.get(int(user_id))
+
+login_manager.login_view = 'auth.login'

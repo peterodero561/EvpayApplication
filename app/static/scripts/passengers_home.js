@@ -1,10 +1,10 @@
 function goBack() {
-    window.history.back('Home.html');
+    window.history.back('home.html');
 }
 function evpay_account() {
-    window.location.href ='account_passengers.html';
+    window.location.href ='/profiles/account';
 }
 function fare_payment(){
-    window.location.href ='fare_payment.html';
+    window.location.href ='/payments/payment_page';
 }
 // Additional functionality can be added here for button clicks

@@ -1,15 +1,16 @@
 function goBack() {
-    window.history.back('Home.html');
+    window.history.back('home.html');
 }
 function evpay_account() {
-    window.location.href ='account_owners.html';
+    window.location.href ='/profiles/account';
 }
 // Additional functionality can be added here for button clicks
 function battery_charging(){
-    window.location.href ='battery_payment.html';
+    // window.location.href ='battery_payment.html';
+    window.location.href = '/profiles/battery_charge';
 
 }
 
 function battery_maintenance(){
-    window.location.href ='battery_maintanance.html';
+    window.location.href ='/profiles/battery_maintanance';
 }

@@ -7,16 +7,18 @@ class Bus(db.Model):
     busModel = db.Column(db.String(50), nullable=False)
     busPlateNo = db.Column(db.String(50), nullable=False, unique=True)
     busBatteryModel = db.Column(db.String(50), nullable=False)
+    busBatteryComapny = db.Column(db.String(50), nullable=False)
     busSeatsNo = db.Column(db.Integer, nullable=False)
     # Foreign key linking to Driver model, referenced as a string
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.driver_id'), nullable=False)
 
 
-    def __init__(self, id=None, model=None, plate=None, battery=None, seatsNo=None, driverId=None):
+    def __init__(self, id=None, model=None, plate=None, battery_model=None, battery_company=None, seatsNo=None, driverId=None):
         self.busId = id
         self.busModel = model
         self.busPlateNo = plate
-        self.busBatteryModel= battery
+        self.busBatteryModel= battery_model
+        self.busBatteryComapny = battery_company
         self.busSeatsNo = seatsNo
         self.busDriverId = driverId
 
@@ -29,6 +31,7 @@ class Bus(db.Model):
             'busModel': self.busModel,
             'busPlateNo': self.busPlateNo,
             'busBatteryModel': self.busBatteryModel,
+            'busBatteryCompany': self.busBatteryComapny,
             'busSeatsNo': self.busSeatsNo,
             'busDriveId': self.busDriverId
         }

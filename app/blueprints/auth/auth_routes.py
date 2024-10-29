@@ -3,10 +3,11 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models.user import User
+from app.models.bus import Bus
 from app.models.driver import Driver
 from app.extensions import db, login_manager
 from sqlalchemy.exc import IntegrityError
-import re
+import re 
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
@@ -37,7 +38,7 @@ def login_pass():
             session['id'] = account.user_id
             session['name'] = account.user_name
             session['email'] = account.user_email
-            msg = {'status': 'success', 'message': 'Logged in successfully!', 'code': 200}
+            msg = {'status': 'success', 'message': 'Logged in successfully!', 'role': account.user_role, 'code': 200}
             return jsonify(msg)
         elif account:
             print('password from form: ', passwd)
@@ -57,6 +58,7 @@ def register():
     return render_template('signup.html')
 
 # route to serve the home page
+@auth_bp.route('/', strict_slashes=False, methods=['GET'])
 @auth_bp.route('/home', strict_slashes=False, methods=['GET'])
 def home():
     return render_template('home.html')
@@ -120,7 +122,7 @@ def register_user():
             email = request.args.get('email')
             passwd = request.args.get('password')
 
-        new_user, msg = register_logic(name, email, passwd)
+        new_user, msg = register_logic(name, email, passwd, role)
 
         return jsonify(msg)
 
@@ -162,3 +164,27 @@ def register_driver():
             return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details', 'code': 403})
 
     return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
+
+
+@auth_bp.route('/register_bus', strict_slashes=False, methods=['POST'])
+@login_required
+def register_bus():
+    if request.method == 'POST':
+        bus_model = request.form.get('busModel')
+        plate = request.form.get('plate')
+        battery_model = request.form.get('batteryModel')
+        battery_company = request.form.get('batteryCompany')
+        seats = request.form.get('busSeats')
+        userId = current_user.user_id
+
+        if bus_model and plate and battery_model and battery_company and seats:
+            try:
+                new_bus = Bus(bus_model, plate, battery_model, battery_company, seats, userId)
+                db.session.add(new_bus)
+                db.session.commit()
+                return jsonify({'status': 'success', 'message': 'Sucessfully Added bus', 'code': 200})
+            except IntegrityError:
+                db.session.rollback()
+                return jsonify({'status': 'error', 'message': 'Integrity Error in creating bus', 'code': 403})
+        return jsonify({'status': 'error', 'message': 'No form data available', 'code': 403})
+    return jsonify({'status': 'error', 'message': 'Wrong Request Method', 'code': 403})

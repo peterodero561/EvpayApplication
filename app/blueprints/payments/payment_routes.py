@@ -1,6 +1,7 @@
 import base64
 import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
+from flask_login import login_required, current_user
 import os
 import requests
 
@@ -10,10 +11,11 @@ payments_bp = Blueprint('payments', __name__, template_folder='templates')
 # M-Pesa credentials
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
-SHORTCODE = os.getenv('SHORTCODE')
-LIPA_NA_MPESA_ONLINE_PASSWORD = os.getenv('LIPA_NA_MPESA_ONLINE_PASSWORD')
-CALLBACK_URL = os.getenv('CALLBACK_URL')
+SHORTCODE = 4453962
+LIPA_NA_MPESA_ONLINE_PASSWORD = 4453962
+CALLBACK_URL = 'https://8afe-102-216-154-101.ngrok-free.app'
 BASE_URL = 'https://sandbox.safaricom.co.ke'
+
 
 # Check if all required environment variables are set
 if not all([CONSUMER_KEY, CONSUMER_SECRET, SHORTCODE, LIPA_NA_MPESA_ONLINE_PASSWORD, CALLBACK_URL]):
@@ -87,3 +89,9 @@ def callback():
     # Process the response from M-Pesa (e.g., log the transaction)
     print(data)
     return jsonify({"status": "success"}), 200
+
+@payments_bp.route('/payment_page', methods=['GET'], strict_slashes=False)
+@login_required
+def charge_page():
+    # returnd charge.html page
+    return render_template('fare_payment.html')

@@ -14,11 +14,19 @@ body {
     border-radius: 10px;
     text-align: center;
 }
+.back-button {
+    position: absolute;
+    left: 150px;
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+}
 
-.header .title {
+.header .title { 
     font-size: 24px;
     margin-bottom: 20px;
 }
+
 
 .profile-pic img {
     width: 120px;
@@ -32,7 +40,15 @@ body {
     margin: 10px 0;
 }
 
-.profile-info input {
+#edit-fields input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#add-bus-form input {
     width: 100%;
     padding: 8px;
     margin: 10px 0;

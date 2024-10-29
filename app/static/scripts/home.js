@@ -3,13 +3,9 @@
 //}
 
 function evOwners() {
-    window.location.href ='owners_home.html';
-    //alert("EV Owners button clicked");
-    // Added a functionality.
+    window.location.href ='/auth/login';
 }
 
 function evPassengers() {
-    window.location.href ='passengers_home.html';
-    //alert("EV Passengers button clicked!");
-    // Add a functionality.
+    window.location.href ='/auth/login';
 }

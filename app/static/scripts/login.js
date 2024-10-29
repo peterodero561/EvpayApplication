@@ -1,16 +1,3 @@
-// // Handle login button click
-// document.querySelector('.login-btn').addEventListener('click', () => {
-//     const email = document.getElementById('email').value;
-//     const password = document.getElementById('password').value;
-
-//     if (email && password) {
-//         // alert(`Logging in with email: ${email}`);
-//         // Add actual login logic here, e.g., validation and authentication
-//     } else {
-//         alert('Please enter both email and password.');
-//     }
-// });
-
 // Querring server side for login
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('login-form');
@@ -31,7 +18,14 @@ document.addEventListener('DOMContentLoaded', function() {
             responseMessage.className = data.status === 'error'? 'error': 'success';
 
             if (data.message === 'Logged in successfully!') {
-                window.location.href = '/auth/home';
+                //select which home page to serve
+                if (data.role == 'user') {
+                    window.location.href = '/profiles/user_profile';
+                } else if (data.role == 'driver') {
+                    window.location.href = '/profiles/driver_profile';
+                } else {
+                    responseMessage.textContent = 'There was an error creating your account. Please create a new account';
+                }
             }
         })
         .catch(error => {
