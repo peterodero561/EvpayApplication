@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">My Profile</h1>
+        </header>
+
+        <main>
+            <section class="profile-section">
+                <!-- Profile Picture -->
+                <div class="profile-pic">
+                    <img id="profile-image" src="https://via.placeholder.com/150" alt="Profile Picture">
+                </div>
+
+                <!-- Profile Information -->
+                <div class="profile-info">
+                    <p><strong>Name:</strong> <span id="name-display">Dorwin Glen</span></p>
+                    <p><strong>Email:</strong> <span id="email-display">dorwinglen@gmail.com</span></p>
+                    <p><strong>Designation:</strong> <span id="designation-display">EV Owner</span></p>
+
+                    <!-- Editable Fields -->
+                    <div id="edit-fields" style="display: none;">
+                        <label for="name-input">Name:</label>
+                        <input type="text" id="name-input" value="Dorwin Glen">
+                        
+                        <label for="email-input">Email:</label>
+                        <input type="email" id="email-input" value="dorwinglen@gmail.com">
+                        
+                        <label for="designation-input">Designation:</label>
+                        <input type="text" id="designation-input" value="EV Owner">
+                    </div>
+                </div>
+
+                <!-- Edit and Save Buttons -->
+                <div class="buttons">
+                    <button id="edit-btn" class="btn green-btn">Edit</button>
+                    <button id="save-btn" class="btn green-btn" style="display: none;">Save</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>
