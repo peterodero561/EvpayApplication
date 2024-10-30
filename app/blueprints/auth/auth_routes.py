@@ -176,10 +176,15 @@ def register_bus():
         battery_company = request.form.get('batteryCompany')
         seats = request.form.get('busSeats')
         userId = current_user.user_id
+        driver = Driver.query.filter_by(user_id=userId).first()
+        driverId = driver.driver_id
 
         if bus_model and plate and battery_model and battery_company and seats:
+            bus = Bus.query.filter_by(busPlateNo=plate).first()
+            if bus:
+                return jsonify({'status': 'error', 'code': 403, 'message': 'A bus with this Plate Number already exists'})
             try:
-                new_bus = Bus(bus_model, plate, battery_model, battery_company, seats, userId)
+                new_bus = Bus(model=bus_model, plate=plate, battery_model=battery_model, battery_company=battery_company, seatsNo=seats, driverId=driverId)
                 db.session.add(new_bus)
                 db.session.commit()
                 return jsonify({'status': 'success', 'message': 'Sucessfully Added bus', 'code': 200})
