@@ -6,7 +6,10 @@ from flask import current_app
 from app.extensions import db
 from app.models.user import User
 from app.models.bus import Bus
+from app.models.driver import Driver
 import os
+from sqlalchemy.exc import IntegrityError
+
 
 profiles_bp = Blueprint('profiles', __name__, template_folder='templates')
 
@@ -42,10 +45,10 @@ def account_data():
     # return current user information
     return jsonify(current_user.to_dict())
 
-@profiles_bp.route('/account_update', strict_slashes=False, methods=['POST'])
+@profiles_bp.route('/account_update', strict_slashes=False, methods=['PUT'])
 @login_required
 def account_update():
-    if request.method == 'POST':
+    if request.method == 'PUT':
         name = request.form.get('name')
         email = request.form.get('email')
         newPasswd = request.form.get('password')
@@ -93,9 +96,41 @@ def battery_maintain():
 @profiles_bp.route('/account_bus', strict_slashes=False, methods=['GET'])
 @login_required
 def account_bus():
-    id = current_user.user_id
-    bus = Bus.query.filter_by(driver_id=id).first()
+    user_id = current_user.user_id
+    driver = Driver.query.filter_by(user_id=user_id).first()
+    driver_id = driver.driver_id
+    bus = Bus.query.filter_by(driver_id=driver_id).first()
     if bus:
         return jsonify(bus.to_dict())
     else:
         return jsonify({'busId': 'Null'})
+    
+@profiles_bp.route('/account_bus_update', strict_slashes=False, methods=['PUT'])
+@login_required
+def account_bus_update():
+    if request.method == 'PUT':
+        bus_model = request.form.get('busModel')
+        plate = request.form.get('plate')
+        battery_model = request.form.get('batteryModel')
+        battery_company = request.form.get('batteryCompany')
+        seats = request.form.get('busSeats')
+        userId = current_user.user_id
+        driver = Driver.query.filter_by(user_id=userId).first()
+        driverId = driver.driver_id
+
+        if bus_model and plate and battery_model and battery_company and seats:
+            bus = Bus.query.filter_by(driver_id=driverId).first()
+            if bus:
+                try:
+                    bus.busModel = bus_model
+                    bus.busPlateNo = plate
+                    bus.busBatteryModel = battery_model
+                    bus.busBatteryCompany = battery_company
+                    bus.busSeatsNo = seats
+                    db.session.commit()
+                    return jsonify({'status': 'success', 'code': 200, 'message': 'Successfully update bus information'})
+                except IntegrityError:
+                    db.session.rollback()
+                    return jsonify({'status': 'error', 'code': 403, 'message': 'Integrity Error in updating bus information'})
+        return jsonify({'status': 'error', 'code': 403, 'message': 'Fill out the form'})
+    return jsonify({'status': 'error', 'code': 403, 'message': 'Bad request'})
