@@ -13,14 +13,14 @@ class Bus(db.Model):
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.driver_id'), nullable=False)
 
 
-    def __init__(self, id=None, model=None, plate=None, battery_model=None, battery_company=None, seatsNo=None, driverId=None):
+    def __init__(self, model=None, plate=None, battery_model=None, battery_company=None, seatsNo=None, driverId=None, id=None):
         self.busId = id
         self.busModel = model
         self.busPlateNo = plate
         self.busBatteryModel= battery_model
         self.busBatteryComapny = battery_company
         self.busSeatsNo = seatsNo
-        self.busDriverId = driverId
+        self.driver_id = driverId
 
     def __repr__(self):
         return f'Bus(busPlate: {self.busPlateNo}, busModel: {self.busModel}, busDriverName: {self.driver.driverName})'
@@ -33,5 +33,5 @@ class Bus(db.Model):
             'busBatteryModel': self.busBatteryModel,
             'busBatteryCompany': self.busBatteryComapny,
             'busSeatsNo': self.busSeatsNo,
-            'busDriveId': self.busDriverId
+            'busDriveId': self.driver_id
         }
