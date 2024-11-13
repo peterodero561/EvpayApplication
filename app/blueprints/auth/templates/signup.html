@@ -16,10 +16,19 @@
             <section class="form-section">
                 <form id="signup-form" method="POST">
                 <h2>Sign Up</h2>
-                <div class="account-type">
+                <!-- <div class="account-type">
                     <button type="button" class="account-type-btns" id="user-btn">User</button>
                     <button type="button" class="account-type-btns" id="driver-btn">Driver</button>
-                </div>
+                </div> -->
+
+                <!-- Account Type -->
+                <label for="account-type">Select Account Type:</label>
+                <select id="account-type" name="account_type" required>
+                  <option value="">--Please choose an option--</option>
+                  <option value="user" selected>User</option>
+                  <option value="driver">Driver</option>
+                  <option value="garage_manager">Garage Manager</option>
+                </select>
 
                 <!-- Name Field -->
                 <div class="field">
@@ -38,16 +47,6 @@
                     <label for="number">Phone Number</label>
                     <input type="number" id="number" name="number" class="input-box" placeholder="Enter your Phone Number">
                 </div>
-
-                <!-- Designation Field -->
-                <!-- <div class="field">
-                    <label for="designation">Confirm Designation</label>
-                    <select id="designation" class="input-box">
-                        <option value="" disabled selected>Select your role</option>
-                        <option value="owner">EV Owner</option>
-                        <option value="passenger">EV Passenger</option>
-                    </select>
-                </div> -->
 
                 <!-- Password Field -->
                 <div class="field">

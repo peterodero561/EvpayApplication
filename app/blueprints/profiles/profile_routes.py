@@ -22,32 +22,43 @@ def allowed_file(filename):
 @profiles_bp.route('/user_profile', methods=['GET'], strict_slashes=False)
 @login_required
 def user_profile():
+    '''method to serve user home page'''
     if current_user.user_role != 'user':
         return redirect(url_for('auth.login'))
     return render_template('passengers_home.html', user=current_user)
 
-@profiles_bp.route('driver_profile', strict_slashes=False, methods=['GET'])
+@profiles_bp.route('/driver_profile', strict_slashes=False, methods=['GET'])
 @login_required
 def driver_profile():
+    '''method to serve driver home page'''
     if current_user.user_role != 'driver':
         redirect(url_for('auth.login'))
     return render_template('owners_home.html', driver=current_user)
 
+@profiles_bp.route('/manager_profile', methods=['GET'], strict_slashes=False)
+@login_required
+def manager_profile():
+    '''method to serve manager home page'''
+    if current_user.user_role != 'garage manager':
+        redirect(url_for('auth.login'))
+    return render_template('manager_home.html', manager=current_user)
+
 @profiles_bp.route('/account', methods=['GET'], strict_slashes=False)
 @login_required
 def account():
-    # serve the my acount page
+    '''Serves the profile page for users'''
     return render_template('profile.html', user=current_user)
 
 @profiles_bp.route('/account_data', methods=['GET'], strict_slashes=False)
 @login_required
 def account_data():
-    # return current user information
+    '''return current user information'''
     return jsonify(current_user.to_dict())
 
 @profiles_bp.route('/account_update', strict_slashes=False, methods=['PUT'])
 @login_required
 def account_update():
+    '''methos to update account information'''
     if request.method == 'PUT':
         name = request.form.get('name')
         email = request.form.get('email')
@@ -83,19 +94,20 @@ def account_update():
 @profiles_bp.route('/battery_charge', strict_slashes=False, methods=['GET'])
 @login_required
 def battery_charge():
-    # servers the charge page
+    '''serves the charge page'''
     return render_template('battery_charging.html')
 
 @profiles_bp.route('/battery_maintanance', strict_slashes=False, methods=['GET'])
 @login_required
 def battery_maintain():
-    # serve battery maintenace page
+    '''serve battery maintenace page'''
     return render_template('battery_maintanance.html')
 
 
 @profiles_bp.route('/account_bus', strict_slashes=False, methods=['GET'])
 @login_required
 def account_bus():
+    '''Returns information about a bus of a given driver'''
     user_id = current_user.user_id
     driver = Driver.query.filter_by(user_id=user_id).first()
     driver_id = driver.driver_id
@@ -108,6 +120,7 @@ def account_bus():
 @profiles_bp.route('/account_bus_update', strict_slashes=False, methods=['PUT'])
 @login_required
 def account_bus_update():
+    '''Updates information about Bus'''
     if request.method == 'PUT':
         bus_model = request.form.get('busModel')
         plate = request.form.get('plate')

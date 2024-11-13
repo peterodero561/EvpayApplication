@@ -1,17 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
 import json
-from models.db import db
+from app.extensions import db
 
 class Garage(db.Model):
     __tablename__ = 'garages'
     garId = db.Column(db.Integer, primary_key=True)
     garName = db.Column(db.String(50), nullable=False, unique=True)
     garLocation = db.Column(db.String(50), nullable=False, unique=True)
-    garServices = db.Column(db.Text, nullable=False)
-    garManagerName = db.Column(db.String(50), nullable=False)
-    garManagerEmail = db.Column(db.String(50), nullable=False)
-    garManagerNo = db.Column(db.Integer, nullable=False)
-    garManagerId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    garServices = db.Column(db.Text, nullable=True)
+    # refrence to manager
+    managerId = db.Column(db.Integer, db.ForeignKey('garManagers.managerId'), nullable=False)
 
     def __init__(self, id=None, garName=None, garLocation=None, garServices=None, managerName=None, managerEmail=None, managerNo=None, managerId=None):
         self.garId = id

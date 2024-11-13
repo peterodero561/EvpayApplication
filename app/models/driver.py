@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from app.extensions import db
-from app.models.bus import Bus
+from app.models.bus import Bus 
 '''code for class Driver'''
 class Driver(db.Model):
     '''Class for creating the driver table in evpay_db'''

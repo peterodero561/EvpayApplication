@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '/profiles/user_profile';
                 } else if (data.role == 'driver') {
                     window.location.href = '/profiles/driver_profile';
+                } else if (data.role == 'garage manager') {
+                    window.location.href = '/profiles/manager_profile'
                 } else {
                     responseMessage.textContent = 'There was an error creating your account. Please create a new account';
                 }

@@ -7,29 +7,33 @@ document.querySelector('.google-login-btn').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const driverBtn = document.getElementById('driver-btn');
+
+    const account = document.getElementById('account-type');
     const phoneField = document.getElementById('phone-field');
-    const userBtn = document.getElementById('user-btn');
     const form = document.getElementById('signup-form');
     const responseMessage = document.getElementById('response-message');
 
-    // set default
-    userBtn.classList.add('active');
-    phoneField.style.display = 'none';
-    form.action = '/auth/register_user';
+    account.addEventListener('change', function(event) {
+        const option = event.target.value;
 
-    driverBtn.addEventListener('click', function() {
-        phoneField.style.display = 'block';
-        userBtn.classList.remove('active');
-        driverBtn.classList.add('active');
-        form.action = '/auth/register_driver';
-    });
-
-    userBtn.addEventListener('click', function(){
-        phoneField.style.display = 'none';
-        driverBtn.classList.remove('active');
-        userBtn.classList.add('active');
-        form.action = '/auth/register_user';
+        if (option === 'user') {
+            phoneField.style.display = 'none';
+            responseMessage.style.display = 'none';
+            form.action = '/auth/register_user';
+        } else if (option === 'driver') {
+            phoneField.style.display = 'block';
+            responseMessage.style.display = 'none';
+            form.action = '/auth/register_driver';
+        } else if (option === 'garage_manager') {
+            phoneField.style.display = 'block';
+            responseMessage.style.display = 'none';
+            form.action = '/auth/register_manager';
+        } else if (option === '') {
+            responseMessage.style.display = 'block';
+            responseMessage.textContent = 'Please select an Account Type';
+            responseMessage.style.color = 'red';
+            return;
+        }
     });
 
     // forwarding data to server side

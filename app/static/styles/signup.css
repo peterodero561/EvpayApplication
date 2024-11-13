@@ -146,3 +146,21 @@ label {
 .message {
     color: black;
 }
+
+ /* Position label above select */
+ label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  /* Style the select box */
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #28a745; /* Default background for unselected */
+    color: white;           /* Default color for unselected */
+  }

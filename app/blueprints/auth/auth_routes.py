@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.models.user import User
 from app.models.bus import Bus
 from app.models.driver import Driver
+from app.models.garage_manager import GarageManager
 from app.extensions import db, login_manager
 from sqlalchemy.exc import IntegrityError
 import re 
@@ -108,6 +109,7 @@ def register_logic(name, email, passwd, role):
 # route for registering a user 
 @auth_bp.route('/register_user', strict_slashes=False, methods=['POST'])
 def register_user():
+    '''method to record a user in a table'''
     msg = {}
     if request.method == 'POST':
         # check for the parameters in form data
@@ -131,7 +133,7 @@ def register_user():
 # router for registering a Driver
 @auth_bp.route('/register_driver', methods=['POST'], strict_slashes=False)
 def register_driver():
-    msg = {}
+    '''method to record a driver in a table'''
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
@@ -166,9 +168,47 @@ def register_driver():
     return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
 
 
+@auth_bp.route('/register_manager', methods = ['POST'])
+def register_manager():
+    '''Registers a garage manager'''
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        passwd = request.form.get('password')
+        no = request.form.get('number')
+        role = 'garage manager'
+
+        # if the data is not in form data look for data in parameters
+        if not name or not email or not passwd or not no:
+            name = request.args.get('name')
+            email = request.args.get('email')
+            passwd = request.args.get('password')
+            no = request.args.get('number')
+        
+        # register the manager as a user first
+        user, msg = register_logic(name, email, passwd, role)
+
+        # check if the manager was successfully created as user
+        if msg['status'] == 'error':
+            return jsonify(msg)
+        
+        # since the manager is now a user create manager record
+        try:
+            new_garage_manager = GarageManager(name=name, email=email, number=no, user_id=user.user_id)
+            db.session.add(new_garage_manager)
+            db.session.commit()
+            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In', 'code': 200})
+        except IntegrityError:
+            db.session.rollback()
+            return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details', 'code': 403})
+    
+    return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
+        
+
 @auth_bp.route('/register_bus', strict_slashes=False, methods=['POST'])
 @login_required
 def register_bus():
+    '''methos to record a bus in the table'''
     if request.method == 'POST':
         bus_model = request.form.get('busModel')
         plate = request.form.get('plate')
