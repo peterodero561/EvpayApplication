@@ -56,3 +56,8 @@ input, select {
 .green-btn:hover {
     background-color: #009900;
 }
+
+.garage-services{
+    display: flex;
+    flex-direction: column;
+}

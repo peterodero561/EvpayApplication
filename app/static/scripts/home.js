@@ -9,3 +9,7 @@ function evOwners() {
 function evPassengers() {
     window.location.href ='/auth/login';
 }
+
+function evManagers() {
+    window.location.href ='/auth/login';
+}

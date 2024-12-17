@@ -7,6 +7,8 @@ from app.extensions import db
 from app.models.user import User
 from app.models.bus import Bus
 from app.models.driver import Driver
+from app.models.garage import Garage
+from app.models.garage_manager import GarageManager
 import os
 from sqlalchemy.exc import IntegrityError
 
@@ -42,6 +44,14 @@ def manager_profile():
     if current_user.user_role != 'garage manager':
         redirect(url_for('auth.login'))
     return render_template('manager_home.html', manager=current_user)
+
+@profiles_bp.route('/garage_setup_page', methods=['GET'], strict_slashes=False)
+@login_required
+def garage_setup_page():
+    '''Method to serrve the garage setup page'''
+    if current_user.user_role != 'garage manager':
+        redirect(url_for('auth.login'))
+    return render_template('garage_setup.html', manager=current_user)
 
 @profiles_bp.route('/account', methods=['GET'], strict_slashes=False)
 @login_required
@@ -147,3 +157,19 @@ def account_bus_update():
                     return jsonify({'status': 'error', 'code': 403, 'message': 'Integrity Error in updating bus information'})
         return jsonify({'status': 'error', 'code': 403, 'message': 'Fill out the form'})
     return jsonify({'status': 'error', 'code': 403, 'message': 'Bad request'})
+
+
+@profiles_bp.route('/account_garage', methods=['GET'], strict_slashes=True)
+@login_required
+def account_garage():
+    if request.method == 'GET':
+        user_id = current_user.user_id
+        garageManager = GarageManager.query.filter_by(user_id=user_id).first()
+        garageManagerID = garageManager.managerId
+        garage = Garage.query.filter_by(managerId=garageManagerID).first()
+
+        if garage:
+            return jsonify(garage.to_dict()), 200
+        else:
+            return jsonify({'garId': 'Null'}), 403
+    return jsonify({'status': 'error', 'message': 'Bad request'}), 403

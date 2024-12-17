@@ -6,10 +6,11 @@ from .blueprints.payments.payment_routes import payments_bp
 from app.config_app import Config
 
 
-def create_app(config_name='config_app.py'):
+def create_app(config_name='config'):
     app = Flask(__name__)
     # configuring app with the database
-    app.config.from_object(Config)
+    from app.config_app import config
+    app.config.from_object(config[config_name])
     app.config['UPLOAD_FOLDER'] = '/home/peterdetech/alx/EvpayApplication/app/static/images/profiles'
 
     # Initialize extensions

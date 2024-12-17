@@ -23,7 +23,15 @@ function fetch_data_user() {
                 if (success === 1) {
                     document.getElementById('edit-bus-btn').style.display = 'inline-block';
                 } else {
-                    document.getElementById('add-btn').style.display = 'inline-block';
+                    document.getElementById('add-bus-btn').style.display = 'inline-block';
+                }
+            });
+        } else if (data.userRole == 'garage manager') {
+            fetch_data_garage(function(success){
+                if (success === 1) {
+                    document.getElementById('edit-garage-btn').style.display = 'inline-block';
+                } else {
+                    document.getElementById('add-garage-btn').style.display = 'inline-block';
                 }
             });
         }
@@ -85,16 +93,48 @@ function fetch_data_bus(callback){
     });
 }
 
+//fetch data of garage
+function fetch_data_garage(callback){
+    fetch('/profiles/account_garage', {method : 'GET'})
+    .then(response => response.json())
+    .then(data => {
+        if (data.garId === 'Null') {
+            document.querySelector('.update-message').style.display = 'block';
+            document.querySelector('.update-message').innerHTML = `
+                <h3>You have not registered a Garage</h3>
+            `;
+            // call the call back with zero to indicate failure
+            if (callback) callback(0);
+        } else {
+            document.querySelector('.garage-info').innerHTML = `
+                <h2 style='color: green;'>My Garage Information</h2>
+                <p><strong>Garage Name:</strong><span>${data.garName}</span></p>
+                <p><strong>Garage Location:</strong><span>${data.garLocation}</span></p>
+                <p><strong>Garage Services:</strong><span>${data.garServices}</span></p>
+            `;
+            if (callback) callback(1);
+        }
+    })
+    .catch(error => {
+        console.error('Error: ', error);
+        document.querySelector('.update-message').style.display = 'block';
+        document.querySelector('.update-message').innerHTML = `
+            <h3>Error Fetching Garage Information</h3>
+        `;
+        // call the call back with zero to indicate failure
+        if (callback) callback(0);
+    })
+}
+
+
 // Toggle edit mode
 document.getElementById('edit-btn').addEventListener('click', function () {
+    document.getElementById('edit-fields').style.display = 'block';
+    document.getElementById('edit-btn').style.display = 'none';
+    document.getElementById('save-btn').style.display = 'inline-block';
     document.querySelector('.profile-info').style.display = 'none'
     document.querySelector('.profile-pic').style.display = 'none'
     document.getElementById('add-btn').style.display = 'none';
-    
-    document.getElementById('edit-fields').style.display = 'block';
-
-    document.getElementById('edit-btn').style.display = 'none';
-    document.getElementById('save-btn').style.display = 'inline-block';
 });
 
 

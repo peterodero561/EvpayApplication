@@ -11,9 +11,14 @@ payments_bp = Blueprint('payments', __name__, template_folder='templates')
 # M-Pesa credentials
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
 CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
-SHORTCODE = 4453962
-LIPA_NA_MPESA_ONLINE_PASSWORD = 4453962
-CALLBACK_URL = 'https://8afe-102-216-154-101.ngrok-free.app'
+SHORTCODE = 174379 # this is for sanbox testing
+# sandbox
+LIPA_NA_MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2fb5a4f36d7cb52d2e3fbde6d5b6ca49'
+timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+password_str = f"174379{LIPA_NA_MPESA_PASSKEY}{timestamp}"
+LIPA_NA_MPESA_ONLINE_PASSWORD = base64.b64encode(password_str.encode()).decode()
+# LIPA_NA_MPESA_ONLINE_PASSWORD = 4453962
+CALLBACK_URL = 'https://2113-102-216-154-106.ngrok-free.app'
 BASE_URL = 'https://sandbox.safaricom.co.ke'
 
 
@@ -62,6 +67,11 @@ def initiate_stk_push(phone_number, amount):
         "AccountReference": "BuygoodsOnline",
         "TransactionDesc": "Transport"
     }
+
+    print("Payload:", payload)
+    print("Headers:", headers)
+
+
     try:
         response = requests.post(f"{BASE_URL}/mpesa/stkpush/v1/processrequest", json=payload, headers=headers)
         response.raise_for_status()
@@ -71,9 +81,13 @@ def initiate_stk_push(phone_number, amount):
         return {"error": "STK Push request failed"}
 
 
-@payments_bp.route('/pay', methods=['POST'])
+@payments_bp.route('/pay', methods=['POST'], strict_slashes=False)
 def pay():
     data = request.get_json()
+    if data is None:
+        return jsonify({'error': 'Invalid JSON Payload'})
+    if 'phone_number' not in data or 'amount' not in data:
+        return jsonify({'error': 'missing required fields'})
     phone_number = data['phone_number']
     amount = data['amount']
 
@@ -91,7 +105,6 @@ def callback():
     return jsonify({"status": "success"}), 200
 
 @payments_bp.route('/payment_page', methods=['GET'], strict_slashes=False)
-@login_required
 def charge_page():
     # returnd charge.html page
     return render_template('fare_payment.html')

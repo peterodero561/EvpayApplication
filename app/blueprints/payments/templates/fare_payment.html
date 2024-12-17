@@ -39,7 +39,7 @@
                     <div class="input-box" id="price">0.00</div>
                 </div>
 
-                <!-- Billing Methods -->
+                <!-- Billing Methods-->
                 <div class="field">
                     <label>Billing Methods</label>
                     <div class="billing-methods">
@@ -55,10 +55,16 @@
                     </div>
                 </div>
 
+                <!-- credentials -->
+                <div class="field" id="credentials" style="display: none;">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="number" class="input-box" id="phone_number">
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button class="btn send-btn" onclick="sendPayment()">Send</button>
-                    <button class="btn refund-btn" onclick="refundPayment()">Refund</button>
+                    <button class="btn send-btn" onclick="sendPayment()">Pay</button>
+                    <!-- <button class="btn refund-btn" onclick="refundPayment()">Refund</button> -->
                 </div>
             </section>
         </main>

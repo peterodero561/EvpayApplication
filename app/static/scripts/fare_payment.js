@@ -3,11 +3,27 @@ function goBack() {
 }
 
 const prices = {
-    multimedia: 50.00,
+    multimedia: 30.00,
     downtown: 100.00,
     airport: 150.00,
     cbd: 200
 };
+
+document.addEventListener('DOMContentLoaded', function(){
+    //add inputs for user to enter their credentials for payment
+    const billingMethods = document.querySelectorAll('input[name="billing"]');
+    const credentials = document.getElementById('credentials');
+
+    billingMethods.forEach((radio) => {
+        radio.addEventListener('change', function(event){
+            if (event.target.value === 'mpesa') {
+                credentials.style.display = 'block';
+            } else {
+                credentials.style.display = 'none';
+            }
+        });
+    });
+});
 
 function updatePrice() {
     const destination = document.getElementById('destination').value;
@@ -23,6 +39,8 @@ function sendPayment() {
     const selectedBillingMethod = document.querySelector('input[name="billing"]:checked');
     const seatNumber = document.getElementById('seat-number').value;
     const destination = document.getElementById('destination').value;
+    const amount = document.getElementById('price').textContent;
+    const phone_number = document.getElementById('phone_number').value;
 
     if (!selectedBillingMethod) {
         alert("Please select a billing method.");
@@ -34,10 +52,27 @@ function sendPayment() {
         return;
     }
 
-    alert(`Payment sent for seat ${seatNumber} to ${destination} using ${selectedBillingMethod.value}.`);
-}
-
-function refundPayment() {
-    // Logic to handle refunds
-    alert("Refund initiated.");
+    // calling pay route
+    if (selectedBillingMethod.value === 'mpesa') {
+        const paymentData = {
+            phone_number: phone_number,
+            amount: parseFloat(amount),
+            seatNumber: seatNumber,
+            destination: destination,
+        }
+        fetch('/payments/pay/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(paymentData)
+        })
+        .then (responce => responce.json())
+        .then (data => {
+            console.log(data);
+            alert(data.error);
+        })
+        .catch(error => {
+            console.log(error);
+            alert(error);
+        });
+    }
 }

@@ -9,14 +9,16 @@ class Driver(db.Model):
     driver_no = db.Column(db.String(20), nullable=True)
     driver_name = db.Column(db.String(50), nullable=False)
     driver_email = db.Column(db.String(50), nullable=False, unique=True)
+    driver_password = db.Column(db.String(250), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     buses = db.relationship('Bus', backref='driver', lazy=True)
 
-    def __init__(self, name, email, number, user_id, driver_id=None):
+    def __init__(self, name, email, number, user_id, passwd, driver_id=None):
         '''function to intialize class Driver'''
         self.driver_id = driver_id
         self.driver_email = email
         self.driver_name = name
+        self.driver_password = passwd
         self.driver_no = number
         self.user_id = user_id
 

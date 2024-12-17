@@ -6,6 +6,7 @@ from app.models.user import User
 from app.models.bus import Bus
 from app.models.driver import Driver
 from app.models.garage_manager import GarageManager
+from app.models.garage import Garage
 from app.extensions import db, login_manager
 from sqlalchemy.exc import IntegrityError
 import re 
@@ -13,7 +14,7 @@ import re
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
 # route for LOGIN 
-@auth_bp.route('/login_pass', strict_slashes=False, methods=['GET', 'POST'])
+@auth_bp.route('/login_pass', strict_slashes=False, methods=['POST'])
 def login_pass():
     # if current_user.is_authenticated:
     #     return redirect(url_for('home'))
@@ -39,19 +40,19 @@ def login_pass():
             session['id'] = account.user_id
             session['name'] = account.user_name
             session['email'] = account.user_email
-            msg = {'status': 'success', 'message': 'Logged in successfully!', 'role': account.user_role, 'code': 200}
-            return jsonify(msg)
+            msg = {'status': 'success', 'message': 'Logged in successfully!', 'role': account.user_role}
+            return jsonify(msg), 200
         elif account:
             print('password from form: ', passwd)
             print('password hash in database: ', account.user_password)
             print('hash check result: ', check_password_hash(account.user_password, passwd))
-            msg = {'status': 'error', 'message': 'Incorrect Password', 'code': 403}
-            return jsonify(msg)
+            msg = {'status': 'error', 'message': 'Incorrect Password'}
+            return jsonify(msg), 403
         else:
-            msg = {'status': 'error', 'message': 'Account does not exist', 'code': 403}
-            return jsonify(msg)
+            msg = {'status': 'error', 'message': 'Account does not exist'}
+            return jsonify(msg), 403
     
-    return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 
 # route to serve the sign up page
 @auth_bp.route('/register', strict_slashes = False, methods=['GET'])
@@ -81,7 +82,7 @@ def logout():
 def register_logic(name, email, passwd, role):
     '''function to register a user'''
     if not name or not email or not passwd:
-        return None, {'status': 'error', 'message': 'Please fill out the form', 'code': 400}
+        return None, {'status': 'error', 'message': 'Missing important important details', 'code': 400}
     # check if ther is an existing account
     existing_email = User.query.filter_by(user_email=email).first()
     if existing_email:
@@ -89,7 +90,7 @@ def register_logic(name, email, passwd, role):
     
     # check if email is valid
     if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-        return None, {'status': 'error', 'message': 'Invalid email address !', 'code': 403}
+        return None, {'status': 'error', 'message': 'Invalid email address!', 'code': 403}
     
     # check if name contains valid characters
     if not re.match(r'[A-Za-z0-9]+', name):
@@ -126,9 +127,9 @@ def register_user():
 
         new_user, msg = register_logic(name, email, passwd, role)
 
-        return jsonify(msg)
+        return jsonify(msg), msg['code']
 
-    return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 
 # router for registering a Driver
 @auth_bp.route('/register_driver', methods=['POST'], strict_slashes=False)
@@ -148,24 +149,27 @@ def register_driver():
             passwd = request.args.get('password')
             no = request.args.get('number')
 
+        if not no:
+            return jsonify({'status': 'error', 'message': 'Missing phone number'}), 400
+
         # register driver first as a user
         user, msg = register_logic(name, email, passwd, role)
 
         # check if the user creation was success
         if msg['status'] == 'error':
-            return jsonify(msg)
+            return jsonify(msg), msg['code']
 
         # create driver record
         try:
-            new_driver = Driver(name=name, email=email, number=no, user_id=user.user_id)
+            new_driver = Driver(name=name, email=email, number=no, passwd=passwd, user_id=user.user_id)
             db.session.add(new_driver)
             db.session.commit()
-            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In', 'code': 200})
+            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In'}), 200
         except IntegrityError:
             db.session.rollback()
-            return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details', 'code': 403})
+            return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details'}), 403
 
-    return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 
 
 @auth_bp.route('/register_manager', methods = ['POST'])
@@ -184,31 +188,35 @@ def register_manager():
             email = request.args.get('email')
             passwd = request.args.get('password')
             no = request.args.get('number')
+
+        # if no is not given
+        if not no:
+            return jsonify({'status': 'error', 'message': 'Missing phone number'}), 400
         
         # register the manager as a user first
         user, msg = register_logic(name, email, passwd, role)
 
         # check if the manager was successfully created as user
         if msg['status'] == 'error':
-            return jsonify(msg)
+            return jsonify(msg), msg['code']
         
         # since the manager is now a user create manager record
         try:
             new_garage_manager = GarageManager(name=name, email=email, number=no, user_id=user.user_id)
             db.session.add(new_garage_manager)
             db.session.commit()
-            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In', 'code': 200})
+            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In'}), 200
         except IntegrityError:
             db.session.rollback()
-            return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details', 'code': 403})
+            return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details'}), 403
     
-    return jsonify({'status': 'error', 'message': 'Invalid request', 'code': 400})
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
         
 
 @auth_bp.route('/register_bus', strict_slashes=False, methods=['POST'])
 @login_required
 def register_bus():
-    '''methos to record a bus in the table'''
+    '''methods to record a bus in the table'''
     if request.method == 'POST':
         bus_model = request.form.get('busModel')
         plate = request.form.get('plate')
@@ -222,14 +230,39 @@ def register_bus():
         if bus_model and plate and battery_model and battery_company and seats:
             bus = Bus.query.filter_by(busPlateNo=plate).first()
             if bus:
-                return jsonify({'status': 'error', 'code': 403, 'message': 'A bus with this Plate Number already exists'})
+                return jsonify({'status': 'error', 'message': 'A bus with this Plate Number already exists'}), 403
             try:
                 new_bus = Bus(model=bus_model, plate=plate, battery_model=battery_model, battery_company=battery_company, seatsNo=seats, driverId=driverId)
                 db.session.add(new_bus)
                 db.session.commit()
-                return jsonify({'status': 'success', 'message': 'Sucessfully Added bus', 'code': 200})
+                return jsonify({'status': 'success', 'message': 'Sucessfully Added bus'}), 200
             except IntegrityError:
                 db.session.rollback()
-                return jsonify({'status': 'error', 'message': 'Integrity Error in creating bus', 'code': 403})
-        return jsonify({'status': 'error', 'message': 'No form data available', 'code': 403})
-    return jsonify({'status': 'error', 'message': 'Wrong Request Method', 'code': 403})
+                return jsonify({'status': 'error', 'message': 'Integrity Error in creating bus'}), 403
+        return jsonify({'status': 'error', 'message': 'Missing important details'}), 403
+    return jsonify({'status': 'error', 'message': 'Wrong Request Method'}), 403
+
+
+@auth_bp.route('/register_garage', methods=['POST'], strict_slashes=False)
+@login_required
+def register_garage():
+    if request.method == 'POST':
+        location = request.form.get('garage-location')
+        name = request.form.get('garage-name')
+        services = request.form.get('Services')
+        userId = current_user.user_id
+        garageManager = GarageManager.query.filter_by(user_id=userId).first()
+        garageManagerId = garageManager.managerId
+
+        if not location or not name or not services:
+            return jsonify({'status': 'error', 'message': 'Missing important details'}), 403
+        
+        try:
+            new_garage = Garage(garName=name, garLocation=location, garServices=services, managerId=garageManagerId)
+            db.session.add(new_garage)
+            db.session.commit()
+            return jsonify({'status': 'success', 'message': 'Garage created successfully'}), 200
+        except IntegrityError:
+            db.session.rollback()
+            return jsonify({'status': 'error', 'message': 'Integrity Error'}), 403
+    return jsonify({'status': 'error', 'message': 'Wrong Request Method'}), 403
