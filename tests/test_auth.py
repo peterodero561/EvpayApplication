@@ -102,7 +102,7 @@ def test_register_garage_manager(client):
     assert b'Missing phone number' in response.data
 
 
-def test_register_bus(client, app):
+def test_register_bus(client):
     '''tests for registration of buses'''
     # when no driver is logged in
     response = client.post('/auth/register_bus', data={})
@@ -110,10 +110,8 @@ def test_register_bus(client, app):
     assert response.status_code == 302
 
     # simulate logging in of a driver
-    # with app.app_context():
     user = User.query.filter_by(user_email='testPeter@example.com').first()
     assert user is not None, "Test user does not exist in the database"
-    #login_user(user)
 
     # Log in the user using the test client by POSTing to the login endpoint
     response = client.post('/auth/login_pass', data={

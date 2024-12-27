@@ -32,5 +32,6 @@ class Driver(db.Model):
             'driverId': self.drive_id,
             'driverName': self.driver_name,
             'driverEmail': self.driver_email,
-            'driverNumber': self.driver_no
+            'driverNumber': self.driver_no,
+            'userId': self.user_id
         }

@@ -13,9 +13,10 @@ class GarageManager(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     garages = db.relationship('Garage', backref='garage_manager', lazy=True)
 
-    def __init__(self, name, email, number, user_id):
+    def __init__(self, name, email, number, user_id, id=None):
         '''Method to initialize the class'''
         self.managerName = name
+        self.managerId = id
         self.managerEmail = email
         self.managerNo = number
         self.user_id = user_id
