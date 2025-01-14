@@ -22,8 +22,9 @@ def login_pass():
     msg = {}
     if request.method == "POST":
         # retrive email & password from form data
-        email = request.form.get('email')
-        passwd = request.form.get('password')
+        data = request.get_json()
+        email = data.get('email')
+        passwd = data.get('password')
 
         # if the email and password are not in form date look in querry parameters
         if not email or not passwd:
@@ -40,17 +41,18 @@ def login_pass():
             session['id'] = account.user_id
             session['name'] = account.user_name
             session['email'] = account.user_email
-            msg = {'status': 'success', 'message': 'Logged in successfully!', 'role': account.user_role}
+            msg = {'status': 'success',
+                   'message': 'Logged in successfully!',
+                   'role': account.user_role,
+                   'user': account.to_dict()
+                }
             return jsonify(msg), 200
         elif account:
-            print('password from form: ', passwd)
-            print('password hash in database: ', account.user_password)
-            print('hash check result: ', check_password_hash(account.user_password, passwd))
             msg = {'status': 'error', 'message': 'Incorrect Password'}
-            return jsonify(msg), 403
+            return jsonify(msg), 400
         else:
             msg = {'status': 'error', 'message': 'Account does not exist'}
-            return jsonify(msg), 403
+            return jsonify(msg), 400
     
     return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 

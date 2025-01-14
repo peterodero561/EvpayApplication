@@ -70,9 +70,10 @@ def account_data():
 def account_update():
     '''methos to update account information'''
     if request.method == 'PUT':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        newPasswd = request.form.get('password')
+        data = request.get_json()
+        name = data.get('name')
+        email = data.get('email')
+        newPasswd = data.get('password')
 
         # chack if a file is uploaded for the profile pic
         if 'pic' in request.files:
@@ -88,7 +89,7 @@ def account_update():
         #check if there is a user with the given email
         existing_email = User.query.filter_by(user_email=email).first()
         if existing_email and existing_email.user_email != current_user.user_email:
-            return jsonify({'status': 'error', 'message': 'An account with this email already exists', 'code': 403})
+            return jsonify({'status': 'error', 'message': 'An account with this email already exists'}), 400
         if user:
             user.user_name = name
             user.user_email = email
@@ -97,8 +98,12 @@ def account_update():
             user.user_profile_pic = pic
             # commit
             db.session.commit()
-            return jsonify({'status': 'success', 'message': 'Account Update Sucessfully', 'code': 200})
-    return jsonify({'status': 'error', 'message': 'Incorect Request Method', 'code': 403})
+            msg = {'status': 'success',
+                   'message': 'Account Update Sucessfully',
+                   'user': user
+                }
+            return jsonify(msg), 200
+    return jsonify({'status': 'error', 'message': 'Incorect Request Method'}), 400
         
 
 @profiles_bp.route('/battery_charge', strict_slashes=False, methods=['GET'])
