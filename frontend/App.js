@@ -7,7 +7,6 @@ import RegisterScreen from './src/screens/Auth/RegisterScreen'
 import UserScreen from './src/screens/Profile/UserScreen';
 import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import EditProfileScreen from './src/screens/Profile/EditProfileScreen';
-import MenuScreen from './src/screens/Profile/MenuScreen';
 
 const Stack = createStackNavigator();
 
@@ -21,7 +20,6 @@ export default function App() {
         <Stack.Screen name='UserScreen' component={UserScreen}/>
         <Stack.Screen name='Profile' component={ProfileScreen}/>
         <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
-        <Stack.Screen name='Menu' component={MenuScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

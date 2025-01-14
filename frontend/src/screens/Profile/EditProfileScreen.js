@@ -1,15 +1,33 @@
 import React, {useState} from "react";
+import axios from 'axios';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 
-const EditProfileScreen = ({navigation}) => {
+const EditProfileScreen = ({navigation, route}) => {
+    const user = route.params;
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confrimPassword, setConfirmPassword] = useState('');
 
-    const handleSaveInfo = () => {
-        if (password === confrimPassword) {
-            navigation.navigate('Profile');
+    const handleSaveInfo = async () => {
+        if (password !== confrimPassword) {
+            alert("Password and Confirm Password must match");
+            return;
+        }
+
+        try {
+            const response = await axios.put("http://192.168.100.10:5000/api/profiles/account_update", {
+                name,
+                email,
+                password,
+            });
+
+            if (response.status === 200) {
+                navigation.navigate('Profile', {user: response.data.user});
+            }
+        } catch (error) {
+            console.error('Edit profile error', error);
+            alert("Something went wrong with Editing profile. Please try again");
         }
     };
 
@@ -53,8 +71,8 @@ const EditProfileScreen = ({navigation}) => {
             />
             
             {/* Create Save Button */}
-            <TouchableOpacity style={styles.createButton}>
-                <Text style={styles.createButtonText} onPress={handleSaveInfo}>Save New Information</Text>
+            <TouchableOpacity style={styles.createButton} onPress={handleSaveInfo}>
+                <Text style={styles.createButtonText}>Save New Information</Text>
             </TouchableOpacity>
         </View>
     );

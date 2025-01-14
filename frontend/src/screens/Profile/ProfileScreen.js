@@ -1,8 +1,10 @@
-import React, {cloneElement, useState} from "react";
+import React, {cloneElement, use, useState} from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-const ProfileScreen = ({navigation}) => {
-    const [profilePic, setProfilePic] = useState(require('../../../assets/images/profile.jpeg'));
+const ProfileScreen = ({navigation, route}) => {
+    // user from UserScreen
+    const { user } = route.params;
+    const profilePic = user?.userProfilePic || require('../../../assets/default.jpg');
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
@@ -12,12 +14,12 @@ const ProfileScreen = ({navigation}) => {
             <Image source={profilePic} style={styles.profile}></Image>
 
             <View style={styles.profileInfo}>
-                <Text style={styles.info}>Name: Peter Omondi</Text>
-                <Text style={styles.info}>Email: peterodero561@gmail.com</Text>
-                <Text style={styles.info}>Designation: User</Text>
+                <Text style={styles.info}>Name: {user?.userName} </Text>
+                <Text style={styles.info}>Email: {user?.userEmail} </Text>
+                <Text style={styles.info}>Designation: {user?.userRole} </Text>
             </View>
 
-            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile')}>
+            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile', {user:user})}>
                 <Text style={styles.editButtonText}>Edit Profile</Text>
             </TouchableOpacity>
         </View>

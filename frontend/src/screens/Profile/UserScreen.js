@@ -6,7 +6,9 @@ import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 
 const { width } = Dimensions.get('window');
 
-const UserScreen = ({navigation}) => {
+const UserScreen = ({navigation, route}) => {
+    //user from login parameters
+    const user = route.params?.user;
 
     const [menuVisible, setMenuVisible] = useState(false);
 
@@ -81,10 +83,9 @@ const UserScreen = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.menuOptions}>
-                    <Text style={styles.menuOption}>Option 1</Text>
-                    <Text style={styles.menuOption}>Option 2</Text>
-                    <Text style={styles.menuOption}>Option 3</Text>
-                    <Text style={styles.menuOption}>Option 4</Text>
+                    <TouchableOpacity>
+                        <Text style={styles.menuOption}>Evpay Bus Locator</Text>
+                    </TouchableOpacity>
                 </View>
             </Animated.View>
 
@@ -94,7 +95,7 @@ const UserScreen = ({navigation}) => {
                     <Icon name="home" size={30} color='#007AFF' />
                     <Text style={styles.footerText}>Home</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.footerItem} >
+                <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: user })} style={styles.footerItem} >
                     <Icon name="person" size={30} color='#8e8e8e' />
                     <Text style={styles.footerText}>Profile</Text>
                 </TouchableOpacity>

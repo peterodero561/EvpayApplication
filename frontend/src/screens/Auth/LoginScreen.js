@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity } from "react-native";
 
@@ -6,10 +7,29 @@ const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        //login logic
-        if (email === 'peterodero561@gmail.com') {
-            navigation.navigate('UserScreen');
+    //login logic
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert("Please enter both email and password!");
+            return;
+        }
+
+        // call to backend
+        try {
+            const response = await axios.post("http://192.168.100.10:5000/api/auth/login_pass", {
+                email,
+                password,
+            });
+
+            if (response.status === 200) {
+                // direct to userscreen 
+                navigation.navigate('UserScreen', {user: response.data.user});
+            } else {
+                alert(response.data.message)
+            }
+        } catch (error) {
+            console.error("Login error: ", error);
+            alert("Something went wrong. Please try again");
         }
     }
 
