@@ -14,16 +14,16 @@ EVPay is a transport payment application that facilitates seamless transactions 
 ## Project Stucture
 
 #### 1. EVPay Application
-'''
+```
 EvpayApplication/
  |--frontend/
  |--backend/
  |--README.md
-'''
+```
 
 #### 2. Backend (Flask)
 
-'''
+```
 backend/
 │
 ├── app/                    # Main backend application
@@ -38,12 +38,11 @@ backend/
 ├── config.py               # App configurations(Prod, Test)
 ├── manage.py               # commands to start the backend
 ├── requirements.txt        # Python dependencies
-
-'''
+```
 
 #### 3. Frontend(React Native)
 
-'''
+```
 frontend/
 ├── src/
 │   ├── components/         # Reusable UI components
@@ -56,7 +55,7 @@ frontend/
 ├── assets/                 # Images, fonts, etc.
 ├── tests/                  # Unit and integration tests
 ├── package.json            # Node.js dependencies
-'''
+```
 
 ## Setup Instructions 
 #### Backend
