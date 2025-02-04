@@ -26,7 +26,7 @@ const EditProfileScreen = ({navigation, route}) => {
                 navigation.navigate('Profile', {user: response.data.user});
             }
         } catch (error) {
-            console.error('Edit profile error', error);
+            console.log("Edit profile error: ", error);
             alert("Something went wrong with Editing profile. Please try again");
         }
     };
