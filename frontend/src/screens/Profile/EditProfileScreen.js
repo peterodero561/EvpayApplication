@@ -1,6 +1,9 @@
 import React, {useState} from "react";
 import axios from 'axios';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import Constants from 'expo-constants';
+
+const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const EditProfileScreen = ({navigation, route}) => {
     const user = route.params;
@@ -16,7 +19,7 @@ const EditProfileScreen = ({navigation, route}) => {
         }
 
         try {
-            const response = await axios.put("http://192.168.100.10:5000/api/profiles/account_update", {
+            const response = await axios.put(`${API_BASE_URL}/profiles/account_update`, {
                 name,
                 email,
                 password,
