@@ -1,20 +1,42 @@
-import React, {useState} from "react";
+import React, {use, useState} from "react";
 import { Button, Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import Constants from 'expo-constants';
+import DropDownPicker from 'react-native-dropdown-picker';
+import axios from "axios";
+
+const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
-    const [designation, setDesignation] = useState('');
     const [password, setPassword] = useState('');
-    const [confrimPassword, setConfirmPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
+        {label: 'Garage Manager', value: 'garage manager'},
+        {label: 'Driver', value: 'driver'},
+        {label: 'Passenger', value: 'user'},
+    ])
 
-    const handleCreateAccount = () => {
-        // Create account logic
-        if (password === confrimPassword) {
-            alert('Account Create Successfully');
-            navigation.navigate('Login');
-        } else {
-            alert('There is a mismatch in password')
+    const handleCreateAccount = async () => {
+        // Check if password and confirmPassword match
+        if (password !== confirmPassword) {
+            alert('There is a mismatch in password');
+            return
+        }
+        try{
+            const response = await axios.post(
+                `${API_BASE_URL}/auth/register_user`,
+                { email, name, password, designation: value },
+                { headers: {"Content-Type": "application/json"}}
+            )
+            
+            // show sucess message
+            alert(response.data.message);
+        } catch(error) {
+            console.log("Registering error, ", error);
+            alert ("Something Went wrong in Registering! Please try again");
         }
     }
 
@@ -31,7 +53,7 @@ const RegisterScreen = ({navigation}) => {
                 style={styles.input}
                 placeholder="Enter Your Name"
                 value={name}
-                onChange={setName}
+                onChangeText={setName}
             />
 
             <Text style={styles.email}>Email address</Text>
@@ -40,13 +62,19 @@ const RegisterScreen = ({navigation}) => {
                 placeholder="Enter your email address"
                 keyboardType="email-address"
                 value={email}
-                onChange={setEmail}
+                onChangeText={setEmail}
             />
 
             <Text style={styles.designation}>Confirm Designation</Text>
-            <TextInput
-                style={styles.input}
-                placeholder=""
+            <DropDownPicker
+                placeholder="Select Destination"
+                open={open}
+                value={value}
+                items={items}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                style={styles.dropdown}
             />
 
             <Text style={styles.password}>Create User Password</Text>
@@ -55,7 +83,7 @@ const RegisterScreen = ({navigation}) => {
                 placeholder="Enter Password"
                 secureTextEntry={true}
                 value={password}
-                onChange={setPassword}
+                onChangeText={setPassword}
             />
 
             <Text style={styles.password}>Confirm User Password</Text>
@@ -63,8 +91,8 @@ const RegisterScreen = ({navigation}) => {
                 style={styles.input}
                 placeholder="Confirm Password"
                 secureTextEntry={true}
-                value={confrimPassword}
-                onChange={setConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
             />
 
             {/* Create account Button */}
@@ -126,6 +154,10 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    dropdown: {
+        borderWidth: 1,
+        borderRadius: 5
     }
 });
 
