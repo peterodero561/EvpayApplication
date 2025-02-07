@@ -1,6 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import Constants from 'expo-constants';
+
+const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
 const LoginScreen = ({navigation}) => {
     // state variables for email and password
@@ -16,20 +19,23 @@ const LoginScreen = ({navigation}) => {
 
         // call to backend
         try {
-            const response = await axios.post("http://192.168.100.10:5000/api/auth/login_pass", {
-                email,
-                password,
-            });
+            const response = await axios.post(
+                `${API_BASE_URL}/auth/login_pass`,
+                { email, password, },
+                {headers: {"Content-Type": "application/json"}}
+            );
 
-            if (response.status === 200) {
-                // direct to userscreen 
-                navigation.navigate('UserScreen', {user: response.data.user});
-            } else {
-                alert(response.data.message)
-            }
+            // show success message
+            alert(response.data.message)
+
         } catch (error) {
             console.error("Login error: ", error);
-            alert("Something went wrong. Please try again");
+
+            if (response) {
+                alert(error.response.data.message || "Something went wrong!")
+            } else {
+                alert("Something went wrong. Please try again");
+            }
         }
     }
 
