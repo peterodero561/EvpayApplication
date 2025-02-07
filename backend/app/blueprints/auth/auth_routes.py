@@ -22,11 +22,11 @@ def login_pass():
     msg = {}
     if request.method == "POST":
         # retrive email & password from form data
-        data = request.get_json()
+        data = request.get_json() or request.form
         email = data.get('email')
         passwd = data.get('password')
 
-        # if the email and password are not in form date look in querry parameters
+        # if the email and password are not in form or JSON take look in querry parameters
         if not email or not passwd:
             email = request.args.get('email')
             passwd = request.args.get('password')

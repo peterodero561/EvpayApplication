@@ -2,20 +2,20 @@
 
 def test_account_data_manager(client):
     # try route when no user is logged in
-    response = client.get('/profiles/account_data', data={})
+    response = client.get('/api/profiles/account_data', data={})
     assert response.status_code == 302
 
     # simulate logging in of a user
-    response = client.post('/auth/login_pass', data={
+    response = client.post('/api/auth/login_pass', json={
         'email': 'testSteve@example.com',
         'password': 'password1234'
-        })
+        }, headers={"Content-Type": "application/json"})
 
     assert response.status_code == 200
 
     # route when the user is loged in
 
-    response = client.get('/profiles/account_data')
+    response = client.get('/api/profiles/account_data')
     assert response.status_code == 200 # the route is executed
 
     assert response.json['userId'] == 2
@@ -27,20 +27,20 @@ def test_account_data_manager(client):
 
 def test_account_data_driver(client):
     # try route when no user is logged in
-    response = client.get('/profiles/account_data', data={})
+    response = client.get('/api/profiles/account_data', data={})
     assert response.status_code == 302
 
     # simulate logging in of a user
-    response = client.post('/auth/login_pass', data={
+    response = client.post('/api/auth/login_pass', json={
         'email': 'testPeter@example.com',
         'password': 'password1234'
-        })
+        }, headers={"Content-Type": "application/json"})
 
     assert response.status_code == 200
 
     # route when the user is loged in
 
-    response = client.get('/profiles/account_data')
+    response = client.get('/api/profiles/account_data')
     assert response.status_code == 200 # the route is executed
 
     assert response.json['userId'] == 1
@@ -52,20 +52,20 @@ def test_account_data_driver(client):
 
 def test_account_data_user(client):
     # try route when no user is logged in
-    response = client.get('/profiles/account_data', data={})
+    response = client.get('/api/profiles/account_data', data={})
     assert response.status_code == 302
 
     # simulate logging in of a user
-    response = client.post('/auth/login_pass', data={
+    response = client.post('/api/auth/login_pass', json={
         'email': 'testMike@example.com',
         'password': 'password1234'
-        })
+        }, headers={"Content-Type": "application/json"})
 
     assert response.status_code == 200
 
     # route when the user is loged in
     
-    response = client.get('/profiles/account_data')
+    response = client.get('/api/profiles/account_data')
     assert response.status_code == 200 # the route is executed
 
     assert response.json['userId'] == 3
@@ -77,17 +77,17 @@ def test_account_data_user(client):
 def test_account_bus(client):
     '''test for route /profiles/account_bus'''
     # test without login credentials
-    response = client.get('/profiles/account_bus')
+    response = client.get('/api/profiles/account_bus')
     assert response.status_code == 302
 
     # log in driver
-    response = client.post('/auth/login_pass', data={
+    response = client.post('/api/auth/login_pass', json={
         'email': 'testPeter@example.com',
         'password': 'password1234'
-        })
+        }, headers={"Content-Type": "application/json"})
     assert response.status_code == 200
 
     # check for bus associated with the driver
-    response = client.get('/profiles/account_bus')
+    response = client.get('/api/profiles/account_bus')
     assert response.status_code == 200
     assert response.json['busId'] == 'Null'
