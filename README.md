@@ -104,7 +104,7 @@ npm install -g expo-cli
 
 3. Run React Native app
 ```sh
-expo start 
+npx expo start 
 ```
 
 4. Run app on device
@@ -112,5 +112,13 @@ expo start
 - *Web*: open in web
 - *Android Studio Simulator*: open in android
 
+
+## Pytest unit tests
+```
+cd backend
+source evpay/bin/activate
+pip3 install pytest
+evpay/bin/python3 -m pytest
+```
 # Contact
 For queries, contact Peter Odero at peterodero561@gmail.com
