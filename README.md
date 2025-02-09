@@ -86,7 +86,7 @@ flask db upgrade
 
 5. Run backend server
 ```sh
-python3 manage_app.py
+python3 manage_app.py  # or flask run --host=0.0.0.0 --port=5000
 ```
 
 
