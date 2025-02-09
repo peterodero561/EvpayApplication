@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
 
-const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+import { API_BASE_URL } from "@env"
 
 const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const RegisterScreen = ({navigation}) => {
         try{
             const response = await axios.post(
                 `${API_BASE_URL}/auth/register_user`,
-                { email, name, password, designation: value },
+                { email, name, password },
                 { headers: {"Content-Type": "application/json"}}
             )
             
