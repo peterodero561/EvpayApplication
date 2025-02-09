@@ -115,17 +115,15 @@ def register_user():
     '''method to record a user in a table'''
     msg = {}
     if request.method == 'POST':
-        # check for the parameters in form data
-        name = request.form.get('name')
-        email = request.form.get('email')
-        passwd = request.form.get('password')
-        role = 'user'
-
-        # if the data is not in form data check for querry parameters
-        if not name or not email or not passwd:
-            name = request.args.get('name')
-            email = request.args.get('email')
-            passwd = request.args.get('password')
+        # get data from JSON data
+        try:
+            data = request.get_json()
+            name = data['name']
+            passwd = data['password']
+            email = data['email']
+            role = 'user'
+        except:
+            return jsonify({'status': 'error', 'message': 'Invalid JSON request'}), 400
 
         new_user, msg = register_logic(name, email, passwd, role)
 
@@ -138,18 +136,13 @@ def register_user():
 def register_driver():
     '''method to record a driver in a table'''
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        passwd = request.form.get('password')
-        no = request.form.get('number')
+        # Get data from JSON data
+        data = request.get_json()
+        name = data('name')
+        email = data('email')
+        passwd = data('password')
+        no = data('number')
         role = 'driver'
-
-        # if the data is not in form data look for data in parameters
-        if not name or not email or not passwd or not no:
-            name = request.args.get('name')
-            email = request.args.get('email')
-            passwd = request.args.get('password')
-            no = request.args.get('number')
 
         if not no:
             return jsonify({'status': 'error', 'message': 'Missing phone number'}), 400
@@ -178,18 +171,13 @@ def register_driver():
 def register_manager():
     '''Registers a garage manager'''
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        passwd = request.form.get('password')
-        no = request.form.get('number')
+        # get data from JSON data
+        data = request.get_data()
+        name = data('name')
+        email = data('email')
+        passwd = data('password')
+        no = data('number')
         role = 'garage manager'
-
-        # if the data is not in form data look for data in parameters
-        if not name or not email or not passwd or not no:
-            name = request.args.get('name')
-            email = request.args.get('email')
-            passwd = request.args.get('password')
-            no = request.args.get('number')
 
         # if no is not given
         if not no:
