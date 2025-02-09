@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import Constants from 'expo-constants';
 
-const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+import { API_BASE_URL } from "@env";
+console.log("API_BASE_URL: ",API_BASE_URL); // Debugging
 
 const LoginScreen = ({navigation}) => {
     // state variables for email and password
@@ -28,10 +29,13 @@ const LoginScreen = ({navigation}) => {
             // show success message
             alert(response.data.message)
 
+            // navigate to user homepage
+            navigation.navigate('UserScreen');
+
         } catch (error) {
             console.error("Login error: ", error);
 
-            if (response) {
+            if (error.response) {
                 alert(error.response.data.message || "Something went wrong!")
             } else {
                 alert("Something went wrong. Please try again");
