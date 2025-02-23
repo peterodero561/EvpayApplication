@@ -86,14 +86,14 @@ flask db upgrade
 
 5. Run backend server
 ```sh
-python3 manage_app.py  # or flask run --host=0.0.0.0 --port=5000
+flask run --host=0.0.0.0 --port=5000 # or python3 manage_app.py; Get the URL to set up in frontend 
 ```
 
 
 #### Frontend
 1. Navigate to and Install Frontend dependancies
 ```sh
-cd EvpayApplication
+cd EvpayApplication/frontend
 npm install
 ```
 
@@ -102,12 +102,19 @@ npm install
 npm install -g expo-cli
 ```
 
-3. Run React Native app
+3. Setup API_BASE_URL
+```sh
+cd EvpayApplication/frontend
+echo 'API_BASE_URL=http://your_pc_address' > .env # The one found after running flask server eg. 192.168.10.10
+source .env # So that the environmental variables are updated
+```
+
+4. Run React Native app
 ```sh
 npx expo start 
 ```
 
-4. Run app on device
+5. Run app on device
 - *Android/ios*: Scan the QR code using *Expo Go* app
 - *Web*: open in web
 - *Android Studio Simulator*: open in android
