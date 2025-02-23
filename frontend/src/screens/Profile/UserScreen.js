@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from "rea
 import Carousel from 'react-native-reanimated-carousel';
 import Icon from "react-native-vector-icons/Ionicons";
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Footer from '../../components/Footer';
 
 const { width } = Dimensions.get('window');
 
@@ -43,6 +44,7 @@ const UserScreen = ({navigation, route}) => {
             </View>
         );
     };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Evpay</Text>
@@ -51,7 +53,7 @@ const UserScreen = ({navigation, route}) => {
             <Carousel
                 data={pictures}
                 width={width} // Required for horizontal carousels
-                height={400} // Provide height for the carousel
+                height={(Dimensions.get('window').height)/2} // Provide height for the carousel
                 renderItem={renderItem}
                 loop={true}
             />
@@ -90,20 +92,7 @@ const UserScreen = ({navigation, route}) => {
             </Animated.View>
 
             {/* Footer Bar */}
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => navigation.navigate('UserScreen')} style={styles.footerItem} >
-                    <Icon name="home" size={30} color='#007AFF' />
-                    <Text style={styles.footerText}>Home</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: user })} style={styles.footerItem} >
-                    <Icon name="person" size={30} color='#8e8e8e' />
-                    <Text style={styles.footerText}>Profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={toggleMenu} style={styles.footerItem} >
-                    <Icon name="menu" size={30} color='#8e8e8e' />
-                    <Text style={styles.footerText}>Menu</Text>
-                </TouchableOpacity>
-            </View>
+            <Footer navigation={navigation} user={user} menu={toggleMenu}/>
         </View>
     );
 };
@@ -191,21 +180,7 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 18,
         marginVertical: 10,
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        padding: 10,
-    },
-    footerItem: {
-        alignItems: 'center',
-    },
-    footerText: {
-        fontSize: 14,
-        marginTop: 5,
-        color: '#8e8e8e',
-    },
+    }
 });
 
 export default UserScreen;
