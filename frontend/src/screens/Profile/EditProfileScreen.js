@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 import axios from 'axios';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
 import Constants from 'expo-constants';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+import { API_BASE_URL } from "@env";
+import * as ImagePicker from 'expo-image-picker';
 
 const EditProfileScreen = ({navigation, route}) => {
     const user = route.params;
@@ -11,6 +13,26 @@ const EditProfileScreen = ({navigation, route}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confrimPassword, setConfirmPassword] = useState('');
+    const [profilePic, setProfilePic] = useState('');
+
+    const pickImage = async () => {
+        const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted'){
+            alert('permision to access gallery is required');
+            return;
+        }
+        
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowEditing: true,
+            aspect: [4, 4],
+            quality: 1,
+        });
+
+        if (!result.canceled){
+            setProfilePic(result.assets[0].uri);
+        }
+    };
 
     const handleSaveInfo = async () => {
         if (password !== confrimPassword) {
@@ -18,14 +40,21 @@ const EditProfileScreen = ({navigation, route}) => {
             return;
         }
 
+        // get session token
+        const token = await AsyncStorage.getItem('authToken');
+
         try {
             const response = await axios.put(`${API_BASE_URL}/profiles/account_update`, {
                 name,
                 email,
                 password,
-            });
+            }, {headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }});
 
             if (response.status === 200) {
+                console.log("Updated user: ", response.data);
                 navigation.navigate('Profile', {user: response.data.user});
             }
         } catch (error) {
@@ -38,39 +67,48 @@ const EditProfileScreen = ({navigation, route}) => {
         <View style={styles.container}>
             <Text style={styles.title}>Edit Profile Screen</Text>
 
-            <Text style={styles.name}>New Name</Text>
+            {/* Profile Picture */}
+            <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
+                {profilePic ? (
+                    <Image source={{ uri: profilePic }} style={styles.profileImage}/>
+                ) : (
+                    <Text style={styles.imagePlaceholder}>Pick a Profile Picture </Text>
+                )}
+            </TouchableOpacity>
+
+            <Text style={styles.label}>New Name</Text>
             <TextInput
                 placeholder="Enter new name"
                 style={styles.input}
                 value={name}
-                onChange={setName}
+                onChangeText={setName}
             />
 
-            <Text style={styles.email}>New Email address</Text>
+            <Text style={styles.label}>New Email address</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Enter your New email address"
                 keyboardType="email-address"
                 value={email}
-                onChange={setEmail}
+                onChangeText={setEmail}
             />
             
-            <Text style={styles.password}>Create New User Password</Text>
+            <Text style={styles.label}>Create New User Password</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Enter New Password"
                 secureTextEntry={true}
                 value={password}
-                onChange={setPassword}
+                onChangeText={setPassword}
             />
             
-            <Text style={styles.password}>Confirm New User Password</Text>
+            <Text style={styles.label}>Confirm New User Password</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Confirm New Password"
                 secureTextEntry={true}
                 value={confrimPassword}
-                onChange={setConfirmPassword}
+                onChangeText={setConfirmPassword}
             />
             
             {/* Create Save Button */}
@@ -105,20 +143,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingHorizontal: 15,
     },
-    email: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
-    name: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
-    designation: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
-    password: {
-        fontSize: 18,
+    label: {
+        fontSize:18,
         marginBottom: 10,
     },
     createButton: {
@@ -131,6 +157,26 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    imageContainer: {
+        alignSelf: 'center',
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: '#ddd',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    profileImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+    },
+    imagePlaceholder: {
+        fontSize: 14,
+        color: '#555',
+        textAlign: 'center',
     }
 });
 
