@@ -70,39 +70,49 @@ def account_data():
 def account_update():
     '''methos to update account information'''
     if request.method == 'PUT':
-        data = request.get_json()
-        name = data.get('name')
-        email = data.get('email')
-        newPasswd = data.get('password')
+        # data = request.get_json()
+        name = request.form.get('name') #data.get('name')
+        email = request.form.get('email') #data.get('email')
+        newPasswd = request.form.get('password') #data.get('password')
+        pic = None
 
         # chack if a file is uploaded for the profile pic
         if 'pic' in request.files:
             pic_file = request.files['pic']
             if pic_file and allowed_file(pic_file.filename):
                 # save file in the profile images directory
-                pic_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], secure_filename(pic_file.filename)))
+                filename = secure_filename(pic_file.filename)
+                pic_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                pic_file.save(pic_path)
                 pic = pic_file.filename
 
         role = current_user.user_role
         # update with the given data
         user = User.query.get(current_user.user_id)
+        if not user:
+            return jsonify({'status': 'error', 'message': ' Current User not found'}), 404
+        
         #check if there is a user with the given email
         existing_email = User.query.filter_by(user_email=email).first()
         if existing_email and existing_email.user_email != current_user.user_email:
             return jsonify({'status': 'error', 'message': 'An account with this email already exists'}), 400
-        if user:
+        if name:
             user.user_name = name
+        if email:
             user.user_email = email
+        if newPasswd:
             user.user_password = generate_password_hash(newPasswd)
             user.user_role = role
+        if pic:
             user.user_profile_pic = pic
-            # commit
-            db.session.commit()
-            msg = {'status': 'success',
-                   'message': 'Account Update Sucessfully',
-                   'user': user
-                }
-            return jsonify(msg), 200
+
+        # commit
+        db.session.commit()
+        msg = {'status': 'success',
+                'message': 'Account Update Sucessfully',
+               'user': user.to_dict()
+            }
+        return jsonify(msg), 200
     return jsonify({'status': 'error', 'message': 'Incorect Request Method'}), 400
         
 

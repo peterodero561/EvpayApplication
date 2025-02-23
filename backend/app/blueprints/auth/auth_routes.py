@@ -13,6 +13,11 @@ import re
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
+#route to check session of a user
+@auth_bp.route('/check_session', methods=['GET'])
+def check_session():
+    return jsonify({'status': 'success', 'user': current_user.to_dict()}), 200
+
 # route for LOGIN 
 @auth_bp.route('/login_pass', strict_slashes=False, methods=['POST'])
 def login_pass():
