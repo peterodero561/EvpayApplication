@@ -2,8 +2,10 @@ import axios from "axios";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { API_BASE_URL } from "@env";
+
 console.log("API_BASE_URL: ",API_BASE_URL); // Debugging
 
 const LoginScreen = ({navigation}) => {
@@ -26,11 +28,19 @@ const LoginScreen = ({navigation}) => {
                 {headers: {"Content-Type": "application/json"}}
             );
 
-            // show success message
-            alert(response.data.message)
+            if (response.status === 200){
+                const {user, role} = response.data
 
-            // navigate to user homepage
-            navigation.navigate('UserScreen');
+                // store session info in AsyncStorage
+                await AsyncStorage.setItem('authToken', response.headers['set-cookie'] || 'SESSION_COOKIE');
+                await AsyncStorage.setItem('user', JSON.stringify(user));
+                await AsyncStorage.setItem('role', role);
+
+                console.log('Logging successful: ', user);
+                navigation.navigate('UserScreen', {user});
+            } else {
+                alert(response.data.message);
+            }
 
         } catch (error) {
             console.error("Login error: ", error);
