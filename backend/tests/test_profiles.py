@@ -3,7 +3,7 @@
 def test_account_data_manager(client):
     # try route when no user is logged in
     response = client.get('/api/profiles/account_data', data={})
-    assert response.status_code == 302
+    assert response.status_code == 401
 
     # simulate logging in of a user
     response = client.post('/api/auth/login_pass', json={
@@ -28,7 +28,7 @@ def test_account_data_manager(client):
 def test_account_data_driver(client):
     # try route when no user is logged in
     response = client.get('/api/profiles/account_data', data={})
-    assert response.status_code == 302
+    assert response.status_code == 401
 
     # simulate logging in of a user
     response = client.post('/api/auth/login_pass', json={
@@ -53,7 +53,7 @@ def test_account_data_driver(client):
 def test_account_data_user(client):
     # try route when no user is logged in
     response = client.get('/api/profiles/account_data', data={})
-    assert response.status_code == 302
+    assert response.status_code == 401
 
     # simulate logging in of a user
     response = client.post('/api/auth/login_pass', json={
@@ -78,7 +78,7 @@ def test_account_bus(client):
     '''test for route /profiles/account_bus'''
     # test without login credentials
     response = client.get('/api/profiles/account_bus')
-    assert response.status_code == 302
+    assert response.status_code == 401
 
     # log in driver
     response = client.post('/api/auth/login_pass', json={
