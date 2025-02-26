@@ -123,12 +123,14 @@ def register_user():
         # get data from JSON data
         try:
             data = request.get_json()
+            if not data:
+                raise ValueError("No JSON data received")
             name = data['name']
             passwd = data['password']
             email = data['email']
             role = 'user'
         except:
-            return jsonify({'status': 'error', 'message': 'Invalid JSON request'}), 400
+            return jsonify({'status': 'error', 'message': 'Missing important important details'}), 400
 
         new_user, msg = register_logic(name, email, passwd, role)
 
@@ -142,15 +144,15 @@ def register_driver():
     '''method to record a driver in a table'''
     if request.method == 'POST':
         # Get data from JSON data
-        data = request.get_json()
-        name = data('name')
-        email = data('email')
-        passwd = data('password')
-        no = data('number')
-        role = 'driver'
-
-        if not no:
-            return jsonify({'status': 'error', 'message': 'Missing phone number'}), 400
+        try:
+            data = request.get_json()
+            name = data['name']
+            email = data['email']
+            passwd = data['password']
+            no = data['number']
+            role = 'driver'
+        except:
+            return jsonify({'status': 'error', 'message': 'Missing important details'}), 400
 
         # register driver first as a user
         user, msg = register_logic(name, email, passwd, role)
@@ -177,16 +179,15 @@ def register_manager():
     '''Registers a garage manager'''
     if request.method == 'POST':
         # get data from JSON data
-        data = request.get_data()
-        name = data('name')
-        email = data('email')
-        passwd = data('password')
-        no = data('number')
-        role = 'garage manager'
-
-        # if no is not given
-        if not no:
-            return jsonify({'status': 'error', 'message': 'Missing phone number'}), 400
+        try:
+            data = request.get_json()
+            name = data['name']
+            email = data['email']
+            passwd = data['password']
+            no = data['number']
+            role = 'garage manager'
+        except:
+            return jsonify({'status': 'error', 'message': 'Missing important details'}), 400
         
         # register the manager as a user first
         user, msg = register_logic(name, email, passwd, role)
@@ -213,14 +214,18 @@ def register_manager():
 def register_bus():
     '''methods to record a bus in the table'''
     if request.method == 'POST':
-        bus_model = request.form.get('busModel')
-        plate = request.form.get('plate')
-        battery_model = request.form.get('batteryModel')
-        battery_company = request.form.get('batteryCompany')
-        seats = request.form.get('busSeats')
-        userId = current_user.user_id
-        driver = Driver.query.filter_by(user_id=userId).first()
-        driverId = driver.driver_id
+        try:
+            data = request.get_json()
+            bus_model = data['busModel']
+            plate = data['plate']
+            battery_model = data['batteryModel']
+            battery_company = data['batteryCompany']
+            seats = data['busSeats']
+            userId = current_user.user_id
+            driver = Driver.query.filter_by(user_id=userId).first()
+            driverId = driver.driver_id
+        except:
+            return jsonify({'status': 'error', 'message': 'Missing important details'}), 403
 
         if bus_model and plate and battery_model and battery_company and seats:
             bus = Bus.query.filter_by(busPlateNo=plate).first()
@@ -242,15 +247,17 @@ def register_bus():
 @login_required
 def register_garage():
     if request.method == 'POST':
-        location = request.form.get('garage-location')
-        name = request.form.get('garage-name')
-        services = request.form.get('Services')
-        userId = current_user.user_id
-        garageManager = GarageManager.query.filter_by(user_id=userId).first()
-        garageManagerId = garageManager.managerId
-
-        if not location or not name or not services:
+        try:
+            data = request.get_json()
+            location = data['garage-location']
+            name = data['garage-name']
+            services = data['Services']
+            userId = current_user.user_id
+            garageManager = GarageManager.query.filter_by(user_id=userId).first()
+            garageManagerId = garageManager.managerId
+        except:
             return jsonify({'status': 'error', 'message': 'Missing important details'}), 403
+            
         
         try:
             new_garage = Garage(garName=name, garLocation=location, garServices=services, managerId=garageManagerId)
