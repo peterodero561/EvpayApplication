@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,9 +35,14 @@ const LoginScreen = ({navigation}) => {
                 await AsyncStorage.setItem('authToken', response.headers['set-cookie'] || 'SESSION_COOKIE');
                 await AsyncStorage.setItem('user', JSON.stringify(user));
                 await AsyncStorage.setItem('role', role);
+                setIsAuthenticated(true);
 
-                console.log('Logging successful: ', user);
-                navigation.navigate('UserScreen', {user});
+                useEffect(() => {
+                    if (isAuthenticated) {
+                        console.log('Logging successful: ', user);
+                        navigation.navigate('UserScreen', {user:user});
+                    }
+                }, [isAuthenticated]);
             } else {
                 alert(response.data.message);
             }
