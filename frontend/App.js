@@ -56,19 +56,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        { isAuthonticated ? (
-          <>
-            <Stack.Screen name='UserScreen' component={UserScreen}/>
-            <Stack.Screen name='Profile' component={ProfileScreen}/>
-            <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
-          </>
-        ): (
-          <>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name='Login' component={LoginScreen}/>
-            <Stack.Screen name='Register' component={RegisterScreen}/>
-          </>
-        )}
+          <Stack.Screen name='UserScreen' component={UserScreen}/>
+          <Stack.Screen name='Profile' component={ProfileScreen}/>
+          <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name='Login' component={LoginScreen}/>
+          <Stack.Screen name='Register' component={RegisterScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
