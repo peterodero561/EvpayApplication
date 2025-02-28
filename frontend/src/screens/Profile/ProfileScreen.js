@@ -1,10 +1,10 @@
 import React, {cloneElement, use, useState} from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
+import { API_BASE_URL } from "@env"
 const ProfileScreen = ({navigation, route}) => {
     // user from UserScreen
     const { user } = route.params;
-    const profilePic = user?.userProfilePic || require('../../../assets/default.jpg');
+    const profilePic = user?.userProfilePic ? { uri: `${API_BASE_URL}/static/images/profiles/${user.userProfilePic}` } : require('../../../assets/default.jpg');
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
