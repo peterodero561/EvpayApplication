@@ -17,15 +17,25 @@ const Stack = createStackNavigator();
 export default function App() {
   const [isAuthonticated, setIsAuthonticated] = useState(null);
 
+  // // clear async storage
+  // useEffect(() => {
+  //   const clearStorage= async () => {
+  //     await AsyncStorage.clear();
+  //     console.log("Async Storage cleared on startup!");
+  //   };
+  //   clearStorage();
+  // }, []);
+
   useEffect(() => {
     const chekSession = async () => {
-      const token = await AsyncStorage.getItem('authToken');
+      const stored_token = await AsyncStorage.getItem('authToken');
+      console.log("Stored token:", stored_token);
+      const token = stored_token || null;
 
       if (token) {
         try {
-          const response = await axios.get(`${API_BASE_URL}/auth/check_session`, {
-            headers: { Authorization: `Bearer ${token}`}
-          });
+          const headers = token ? { Authorization: `Bearer ${token}`} : {}; 
+          const response = await axios.get(`${API_BASE_URL}/auth/check_session`, {headers});
 
           if (response.status === 200) {
             setIsAuthonticated(true); // user is logged in
@@ -55,7 +65,7 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='UserScreen' component={UserScreen}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>
           <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
