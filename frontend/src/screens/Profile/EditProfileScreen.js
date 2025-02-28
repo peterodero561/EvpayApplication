@@ -3,9 +3,9 @@ import axios from 'axios';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
 import Constants from 'expo-constants';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { API_BASE_URL } from "@env";
 import * as ImagePicker from 'expo-image-picker';
+import { v4 as uuidv4 } from 'uuid';
 
 const EditProfileScreen = ({navigation, route}) => {
     const user = route.params;
@@ -42,16 +42,31 @@ const EditProfileScreen = ({navigation, route}) => {
 
         // get session token
         const token = await AsyncStorage.getItem('authToken');
+        if (!token){
+            console.error('No auth token found!');
+            alert("Session expired! Please log in again");
+            navigation.navigate('Login');
+            return;
+        }
+
+        // Preparing form data
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('password', password);
+
+        if (profilePic){
+            // Exxtract file name and file type
+            const fileName = `profile_${uuidv4()}.jpg`;
+            const response = await fetch(profilePic);
+            const blob = await response.blob();
+            formData.append('profile_pic', blob, fileName);
+        }
 
         try {
-            const response = await axios.put(`${API_BASE_URL}/profiles/account_update`, {
-                name,
-                email,
-                password,
-            }, {headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }});
+            const response = await axios.put(`${API_BASE_URL}/api/profiles/account_update`, formData, {
+                headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}
+            });
 
             if (response.status === 200) {
                 console.log("Updated user: ", response.data);
