@@ -5,14 +5,14 @@ from .blueprints.auth.auth_routes import auth_bp
 from .blueprints.profiles.profile_routes import profiles_bp
 from .blueprints.payments.payment_routes import payments_bp
 from app.config_app import Config
-
+from flask_jwt_extended import JWTManager
 
 def create_app(config_name='config'):
     app = Flask(__name__)
     # configuring app with the database
     from app.config_app import config
     app.config.from_object(config[config_name])
-    app.config['UPLOAD_FOLDER'] = '/home/peterdetech/alx/EvpayApplication/app/static/images/profiles'
+    app.config['UPLOAD_FOLDER'] = '/home/peterdetech/alx/Evpay/backend/app/static/images/profiles'
 
     # Enable Cross-Origin Resorce Shaing (CORS) for frontend communication
     CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -21,6 +21,10 @@ def create_app(config_name='config'):
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
+
+    # Secret key for JWT
+    app.config['JWT_SECRET_KET'] = 'Evpay_mobile_app'
+    jwt = JWTManager(app)
 
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
