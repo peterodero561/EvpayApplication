@@ -1,9 +1,8 @@
-import React, { act, useState } from "react";
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
 import Carousel from 'react-native-reanimated-carousel';
-import Icon from "react-native-vector-icons/Ionicons";
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import Footer from '../../components/Footer';
+import SlidingMenu from "../../components/SlidingMenu";
 
 const { width } = Dimensions.get('window');
 
@@ -12,24 +11,7 @@ const UserScreen = ({navigation, route}) => {
     const user = route.params?.user;
 
     const [menuVisible, setMenuVisible] = useState(false);
-
-    const toggleMenu = () => {
-        setMenuVisible(!menuVisible);
-    };
-
-    // Animated styles for menu
-    const animatedMenuStyle = useAnimatedStyle (() => ({
-        transform: [
-            {
-                translateX: withTiming(menuVisible ? 0: width, { duration: 300}),
-            },
-        ],
-    }));
-
-    const overlayStyle = useAnimatedStyle(() => ({
-        opacity: withTiming(menuVisible ? 0.5 : 0, { duration: 300 }),
-    }));
-
+    const toggleMenu = () => setMenuVisible(!menuVisible);
 
     const [pictures, setPictures] = useState([
         {id: 1, url: require('../../../assets/images/EVCharge.jpeg')},
@@ -69,27 +51,8 @@ const UserScreen = ({navigation, route}) => {
                 <Text style={styles.activity}>Activity one</Text>
             </View>
 
-            {/* Overlay when the menu is visible */}
-            {menuVisible && (
-                <Animated.View style={[styles.overlay, overlayStyle]}>
-                    <TouchableOpacity style={{ flex: 1 }} onPress={toggleMenu} />
-                </Animated.View>
-            )}
-
-            {/* sliding Menu */}
-            <Animated.View style={[styles.menuContainer, animatedMenuStyle]}>
-                <View style={styles.menuHeader}>
-                    <Text style={styles.menuTitle}>Menu</Text>
-                    <TouchableOpacity onPress={toggleMenu}>
-                        <Icon name="close" size={30} color='#000'/>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.menuOptions}>
-                    <TouchableOpacity>
-                        <Text style={styles.menuOption}>Evpay Bus Locator</Text>
-                    </TouchableOpacity>
-                </View>
-            </Animated.View>
+            {/* Sliding Menu component */}
+            <SlidingMenu menuVisible={menuVisible} toggleMenu={toggleMenu}/>
 
             {/* Footer Bar */}
             <Footer navigation={navigation} user={user} menu={toggleMenu}/>
@@ -143,44 +106,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 5,
     },
-    overlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 1.0)', // making semitensparent
-        zIndex: 5,
-    },
-    menuContainer: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        bottom: 0,
-        width: '50%',
-        backgroundColor: '#50ff50',
-        zIndex: 10,
-        padding: 20,
-        borderRadius: 10,
-    },
-    menuHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    menuTitle: {
-        color: '#000',
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    menuOptions: {
-        marginTop: 20,
-    },
-    menuOption: {
-        color: '#000',
-        fontSize: 18,
-        marginVertical: 10,
-    }
 });
 
 export default UserScreen;
