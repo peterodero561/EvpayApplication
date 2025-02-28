@@ -1,4 +1,5 @@
-from flask import Blueprint, redirect, url_for, render_template, jsonify, request
+from flask import Blueprint, redirect, url_for, render_template, jsonify, request, current_app
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
@@ -11,7 +12,7 @@ from app.models.garage import Garage
 from app.models.garage_manager import GarageManager
 import os
 from sqlalchemy.exc import IntegrityError
-
+import uuid
 
 profiles_bp = Blueprint('profiles', __name__, template_folder='templates')
 
@@ -66,45 +67,54 @@ def account_data():
     return jsonify(current_user.to_dict())
 
 @profiles_bp.route('/account_update', strict_slashes=False, methods=['PUT'])
-@login_required
+@jwt_required()
 def account_update():
     '''methos to update account information'''
     if request.method == 'PUT':
-        # data = request.get_json()
-        name = request.form.get('name') #data.get('name')
-        email = request.form.get('email') #data.get('email')
-        newPasswd = request.form.get('password') #data.get('password')
-        pic = None
-
-        # chack if a file is uploaded for the profile pic
-        if 'pic' in request.files:
-            pic_file = request.files['pic']
-            if pic_file and allowed_file(pic_file.filename):
-                # save file in the profile images directory
-                filename = secure_filename(pic_file.filename)
-                pic_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-                pic_file.save(pic_path)
-                pic = pic_file.filename
-
-        role = current_user.user_role
-        # update with the given data
-        user = User.query.get(current_user.user_id)
-        if not user:
-            return jsonify({'status': 'error', 'message': ' Current User not found'}), 404
+        try:
+            if 'name' not in request.form or 'email' not in request.form:
+                return jsonify({"status": "error", "message": "Missing important details"}), 400
+            
+            name = request.form['name']
+            email = request.form['email']
+            newPasswd = request.form.get('password')
+            pic = request.files.get('profile_pic')
+        except:
+            return jsonify({"status": "error", "message": "Missing important details"}), 400
         
+        # get logged in user
+        user_id = get_jwt_identity()
+        if not user_id:
+            return jsonify({"status": "error", "message": "Unauthorized"}), 401
+        
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
         #check if there is a user with the given email
         existing_email = User.query.filter_by(user_email=email).first()
-        if existing_email and existing_email.user_email != current_user.user_email:
+        if existing_email and existing_email.user_email != user.user_email:
             return jsonify({'status': 'error', 'message': 'An account with this email already exists'}), 400
+        
+        # update user email
         if name:
             user.user_name = name
         if email:
             user.user_email = email
         if newPasswd:
             user.user_password = generate_password_hash(newPasswd)
-            user.user_role = role
-        if pic:
-            user.user_profile_pic = pic
+        if pic and allowed_file(pic.filename):
+            # generate unique filename
+            ext = pic.filename.rsplit('.', 1)[1].lower()
+            filename = f"profile_{uuid.uuid4()}.{ext}" # secure_filename(pic.filename)
+
+            pic_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            pic.save(pic_path)
+            
+            user.user_profile_pic = filename
+            print(f"Receive file: {filename}")
+        else:
+            print(f"No file received")
 
         # commit
         db.session.commit()

@@ -9,14 +9,17 @@ from app.models.garage_manager import GarageManager
 from app.models.garage import Garage
 from app.extensions import db, login_manager
 from sqlalchemy.exc import IntegrityError
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re 
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
 #route to check session of a user
 @auth_bp.route('/check_session', methods=['GET'])
+@jwt_required()
 def check_session():
-    return jsonify({'status': 'success', 'user': current_user.to_dict()}), 200
+    user = get_jwt_identity()
+    return jsonify({'status': 'success', 'user': user}), 200
 
 # route for LOGIN 
 @auth_bp.route('/login_pass', strict_slashes=False, methods=['POST'])
@@ -46,10 +49,14 @@ def login_pass():
             session['id'] = account.user_id
             session['name'] = account.user_name
             session['email'] = account.user_email
+            # genarate jwt token
+            token = create_access_token(identity=str(account.user_id), additional_claims={'email': account.user_email})
+
             msg = {'status': 'success',
                    'message': 'Logged in successfully!',
                    'role': account.user_role,
-                   'user': account.to_dict()
+                   'user': account.to_dict(),
+                   'token': token
                 }
             return jsonify(msg), 200
         elif account:
