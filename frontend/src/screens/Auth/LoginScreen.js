@@ -12,6 +12,16 @@ const LoginScreen = ({navigation}) => {
     // state variables for email and password
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState(null)
+
+    // useeffect
+    useEffect(() => {
+        if (isAuthenticated){
+            console.log('Logging successful: ', user);
+            navigation.navigate('UserScreen', {user});
+        }
+    }, [isAuthenticated]);
 
     //login logic
     const handleLogin = async () => {
@@ -23,26 +33,28 @@ const LoginScreen = ({navigation}) => {
         // call to backend
         try {
             const response = await axios.post(
-                `${API_BASE_URL}/auth/login_pass`,
+                `${API_BASE_URL}/api/auth/login_pass`,
                 { email, password, },
                 {headers: {"Content-Type": "application/json"}}
             );
 
             if (response.status === 200){
-                const {user, role} = response.data
+                const {user, role, token} = response.data
+
+                if (!token){
+                    console.error('No token received');
+                    alert('Authentication failed!');
+                    return;
+                }
 
                 // store session info in AsyncStorage
-                await AsyncStorage.setItem('authToken', response.headers['set-cookie'] || 'SESSION_COOKIE');
+                await AsyncStorage.setItem('authToken', token);
                 await AsyncStorage.setItem('user', JSON.stringify(user));
                 await AsyncStorage.setItem('role', role);
                 setIsAuthenticated(true);
 
-                useEffect(() => {
-                    if (isAuthenticated) {
-                        console.log('Logging successful: ', user);
-                        navigation.navigate('UserScreen', {user:user});
-                    }
-                }, [isAuthenticated]);
+                setUser(user)
+                setIsAuthenticated(true)
             } else {
                 alert(response.data.message);
             }
