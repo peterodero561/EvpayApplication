@@ -9,6 +9,8 @@ import RegisterScreen from './src/screens/Auth/RegisterScreen'
 import UserScreen from './src/screens/Profile/UserScreen';
 import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import EditProfileScreen from './src/screens/Profile/EditProfileScreen';
+import AllActivitiesScreen from './src/screens/Profile/AllActivitiesScreen';
+import FarePaymentScreen from './src/screens/Payments/FarePaymentScreen';
 import { ActivityIndicator, View } from 'react-native';
 import { API_BASE_URL } from "@env";
 
@@ -65,13 +67,15 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'>
+      <Stack.Navigator initialRouteName='FarePayment'>
           <Stack.Screen name='UserScreen' component={UserScreen}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>
           <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name='Login' component={LoginScreen}/>
           <Stack.Screen name='Register' component={RegisterScreen}/>
+          <Stack.Screen name='AllActivities' component={AllActivitiesScreen}/>
+          <Stack.Screen name='FarePayment' component={FarePaymentScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
