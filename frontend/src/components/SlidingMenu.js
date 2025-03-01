@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Animated, { useAnimatedStyle, withTiming} from "react-native-reanimated";
 
-const SlidingMenu = ({ menuVisible, toggleMenu }) => {
+const SlidingMenu = ({ menuVisible, toggleMenu, user, navigation }) => {
     // Animated styles for menu
     const animatedMenuStyle = useAnimatedStyle(() => ({
         transform: [
@@ -16,6 +16,13 @@ const SlidingMenu = ({ menuVisible, toggleMenu }) => {
     const overlayStyle = useAnimatedStyle(() => ({
         opacity: withTiming(menuVisible ? 0.5 : 0, { duration: 300}),
     }));
+
+    // Defin menu options based on user role
+    const menuOptions = [
+        {id: 1, title: "Evpay Bus Locator", roles: ['user', 'driver'], screen: "BusLocator"},
+        {id: 2, title: "Garages", roles: ["driver", 'garage manager'], screen: "Garage"},
+        {id: 3, title: "Payment", roles: ["user", "driver", "garage manager"], screen: "FarePayment"},
+    ];
 
     return(
         <>
@@ -35,9 +42,19 @@ const SlidingMenu = ({ menuVisible, toggleMenu }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.menuOptions}>
-                    <TouchableOpacity>
-                        <Text style={styles.menuOption}>Evpay Bus Locator</Text>
-                    </TouchableOpacity>
+                    {menuOptions
+                        .filter((option) => option.roles.includes(user?.userRole))
+                        .map((option) => (
+                            <TouchableOpacity
+                                key={option.id}
+                                onPress={() => {
+                                    toggleMenu(); // close menu
+                                    navigation.navigate(option.screen, {user: user})
+                                }}
+                                >
+                                <Text style={styles.menuOption}>{option.title}</Text>
+                            </TouchableOpacity>
+                        ))}
                 </View>
             </Animated.View>
         </>
