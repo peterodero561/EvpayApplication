@@ -7,6 +7,7 @@ from app.models.bus import Bus
 from app.models.driver import Driver
 from app.models.garage_manager import GarageManager
 from app.models.garage import Garage
+from app.models.activity import Activity
 from app.extensions import db, login_manager
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -58,6 +59,9 @@ def login_pass():
                    'user': account.to_dict(),
                    'token': token
                 }
+            new_activity = Activity(user_id=account.user_id, description="Login")
+            db.session.add(new_activity)
+            db.session.commit()
             return jsonify(msg), 200
         elif account:
             msg = {'status': 'error', 'message': 'Incorrect Password'}
@@ -240,6 +244,8 @@ def register_bus():
                 return jsonify({'status': 'error', 'message': 'A bus with this Plate Number already exists'}), 403
             try:
                 new_bus = Bus(model=bus_model, plate=plate, battery_model=battery_model, battery_company=battery_company, seatsNo=seats, driverId=driverId)
+                new_activity = Activity(user_id=userId, description="Added a new bus")
+                db.session.add(new_activity)
                 db.session.add(new_bus)
                 db.session.commit()
                 return jsonify({'status': 'success', 'message': 'Sucessfully Added bus'}), 200
@@ -268,6 +274,8 @@ def register_garage():
         
         try:
             new_garage = Garage(garName=name, garLocation=location, garServices=services, managerId=garageManagerId)
+            new_activity = Activity(user_id=userId, description="Added a garage")
+            db.session.add(new_activity)
             db.session.add(new_garage)
             db.session.commit()
             return jsonify({'status': 'success', 'message': 'Garage created successfully'}), 200
