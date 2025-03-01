@@ -1,12 +1,20 @@
 import React, {cloneElement, use, useState} from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { API_BASE_URL } from "@env"
+import Footer from "../../components/Footer";
+import SlidingMenu from "../../components/SlidingMenu";
+
 const ProfileScreen = ({navigation, route}) => {
     // user from UserScreen
     const { user } = route.params;
+    const [menuVisible, setMenuVisible] = useState(false);
+    const toggleMenu = () => setMenuVisible(!menuVisible);
     const profilePic = user?.userProfilePic ? { uri: `${API_BASE_URL}/static/images/profiles/${user.userProfilePic}` } : require('../../../assets/default.jpg');
+
+
     return (
         <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.contentContainer}>
             <Text style={styles.title}>
                 ProfileScreen
             </Text>
@@ -22,6 +30,13 @@ const ProfileScreen = ({navigation, route}) => {
             <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile', {user:user})}>
                 <Text style={styles.editButtonText}>Edit Profile</Text>
             </TouchableOpacity>
+            </ScrollView>
+
+            {/* Sliding Menu component */}
+            <SlidingMenu menuVisible={menuVisible} toggleMenu={toggleMenu} user={user} navigation={navigation}/>
+
+            {/* Footer Bar */}
+            <Footer navigation={navigation} user={user} menu={toggleMenu} menuVisible={false}/>
         </View>
     );
 };
@@ -29,8 +44,12 @@ const ProfileScreen = ({navigation, route}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#f0f0f0',
+    },
+    contentContainer: {
+        flexGrow: 1,
         padding: 16,
-        flexDirection: 'column',
+        justifyContent: 'center'
     },
     title: {
         fontSize: 24,
@@ -67,8 +86,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignSelf: 'center',
         width: '70%',
-        position: 'absolute',
-        bottom: 250,
+        marginBottom: 20,
     },
     editButtonText: {
         fontSize: 20,

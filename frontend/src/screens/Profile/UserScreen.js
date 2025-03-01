@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
 import Carousel from 'react-native-reanimated-carousel';
 import Footer from '../../components/Footer';
 import SlidingMenu from "../../components/SlidingMenu";
+import Activities from "../../components/Activities";
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +18,12 @@ const UserScreen = ({navigation, route}) => {
         {id: 1, url: require('../../../assets/images/EVCharge.jpeg')},
         {id: 2, url: require('../../../assets/images/EVCharge2.jpeg')},
         {id: 3, url: require('../../../assets/images/EVCharge3.jpeg')},
+    ]);
+
+    const [activities, setActivities] = useState([
+        "Payment of $20",
+        "Profile update",
+        "Check balance: $50",
     ]);
 
     const renderItem = ({ item }) => {
@@ -40,22 +47,14 @@ const UserScreen = ({navigation, route}) => {
                 loop={true}
             />
 
-            <View style={styles.activities}>
-                <Text style={styles.activitiesTitle}>
-                    My Evpay Activities
-                </Text>
-
-                <Text style={styles.activity}>Activity one</Text>
-                <Text style={styles.activity}>Activity one</Text>
-                <Text style={styles.activity}>Activity one</Text>
-                <Text style={styles.activity}>Activity one</Text>
-            </View>
+            {/* Activities component */}
+            <Activities navigation={navigation}/>
 
             {/* Sliding Menu component */}
-            <SlidingMenu menuVisible={menuVisible} toggleMenu={toggleMenu}/>
+            <SlidingMenu menuVisible={menuVisible} toggleMenu={toggleMenu} user={user} navigation={navigation}/>
 
             {/* Footer Bar */}
-            <Footer navigation={navigation} user={user} menu={toggleMenu}/>
+            <Footer navigation={navigation} user={user} menu={toggleMenu} menuVisible={menuVisible}/>
         </View>
     );
 };
