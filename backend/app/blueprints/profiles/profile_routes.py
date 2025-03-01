@@ -10,6 +10,7 @@ from app.models.bus import Bus
 from app.models.driver import Driver
 from app.models.garage import Garage
 from app.models.garage_manager import GarageManager
+from app.models.activity import Activity
 import os
 from sqlalchemy.exc import IntegrityError
 import uuid
@@ -117,6 +118,8 @@ def account_update():
             print(f"No file received")
 
         # commit
+        new_activity = Activity(user_id=user_id, description="Account profile update")
+        db.session.add(new_activity)
         db.session.commit()
         msg = {'status': 'success',
                 'message': 'Account Update Sucessfully',
@@ -175,6 +178,8 @@ def account_bus_update():
                     bus.busBatteryModel = battery_model
                     bus.busBatteryCompany = battery_company
                     bus.busSeatsNo = seats
+                    new_activity = Activity(user_id=userId, description="Bus profile update")
+                    db.session.add(new_activity)
                     db.session.commit()
                     return jsonify({'status': 'success', 'code': 200, 'message': 'Successfully update bus information'})
                 except IntegrityError:
@@ -184,7 +189,7 @@ def account_bus_update():
     return jsonify({'status': 'error', 'code': 403, 'message': 'Bad request'})
 
 
-@profiles_bp.route('/account_garage', methods=['GET'], strict_slashes=True)
+@profiles_bp.route('/account_garage', methods=['GET'], strict_slashes=False)
 @login_required
 def account_garage():
     if request.method == 'GET':
@@ -198,3 +203,16 @@ def account_garage():
         else:
             return jsonify({'garId': 'Null'}), 403
     return jsonify({'status': 'error', 'message': 'Bad request'}), 403
+
+@profiles_bp.route('/activities', methods=['GET'], strict_slashes=False)
+@jwt_required()
+def get_activities():
+    user_id = get_jwt_identity()
+    # get limit parameter from query
+    limit = request.args.get('limit', default=0, type=int)
+    query = Activity.query.filter_by(user_id=user_id).order_by(Activity.timestamp.desc())
+    if limit:
+        query = query.limit(limit)
+    activities = query.all()
+    activities_list = [activity.to_dict() for activity in activities]
+    return jsonify({"activities": activities_list}), 200
