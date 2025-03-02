@@ -67,7 +67,7 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='FarePayment'>
+      <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='UserScreen' component={UserScreen}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>
           <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
