@@ -4,16 +4,17 @@ import { Picker } from "@react-native-picker/picker";
 
 const billingMethods = ["M-pesa", "Credit Card"]
 const destinations = [
-    {label: 'To/From Nairobi to From/To Rongai', fare: 100},
-    {label: 'To/From Nyayo From/TO Nairobi', fare: 30},
-    {label: "To/From Lang'ata From/To Nairobi", fare: 50},
-    {label: 'To/From Bomas From/To Nairobi', fare: 70},
-    {label: 'To/From Multimedia From/To Nairobi', fare: 100}
+    {id: 'dest1', label: 'To/From Nairobi to From/To Rongai', fare: 100},
+    {id: 'dest2', label: 'To/From Nyayo From/TO Nairobi', fare: 30},
+    {id: 'dest3', label: "To/From Lang'ata From/To Nairobi", fare: 50},
+    {id: 'dest4', label: 'To/From Bomas From/To Nairobi', fare: 70},
+    {id: 'dest5', label: 'To/From Multimedia From/To Nairobi', fare: 100}
     ];
 
 const FarePaymentScreen = ({navigation, route}) => {
     const [selectedMethod, setSelectedMethod] = useState(null);
-    const [selectedDestination, setSelectedDestination] = useState(destinations[0]);
+    const [selectedDestinationId, setSelectedDestinationId] = useState(destinations[0].id);
+    const selectedDestination = destinations.find(dest => dest.id === selectedDestinationId);
 
     return(
         <ScrollView style={styles.container}>
@@ -29,12 +30,12 @@ const FarePaymentScreen = ({navigation, route}) => {
 
             <Text style={styles.inputText}>Destination</Text>
             <Picker
-                selectedValue={selectedDestination}
+                selectedValue={selectedDestinationId}
                 style={styles.picker}
-                onValueChange={(itemValue, itemIndex) => selectedDestination(itemValue)}
+                onValueChange={(itemValue, itemIndex) => setSelectedDestinationId(itemValue)}
             >
-                {destinations.map((destination, index) => (
-                    <Picker.Item key={index} label={destination.label} value={destination}/>
+                {destinations.map((destination) => (
+                    <Picker.Item key={destination.id} label={destination.label} value={destination.id}/>
                 ))}
             </Picker>
 
@@ -60,6 +61,16 @@ const FarePaymentScreen = ({navigation, route}) => {
                     </TouchableOpacity>
                 ))}
             </View>
+
+            {selectedMethod === 'M-pesa' && (
+                <>
+                    <Text style={styles.inputText}>Safaricom Phone Number</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your safaricom phone Number"
+                    />
+                </>
+            )}
 
             <TouchableOpacity style={styles.payButton}>
                 <Text style={styles.payButtonText}>Pay</Text>
@@ -100,6 +111,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 15,
         backgroundColor: "#fff",
+        height: 50,
+        fontSize: 16,
     },
     radioGroup: {
         marginBottom: 20,
