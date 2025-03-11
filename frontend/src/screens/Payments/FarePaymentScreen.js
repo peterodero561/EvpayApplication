@@ -16,6 +16,10 @@ const FarePaymentScreen = ({navigation, route}) => {
     const [selectedDestinationId, setSelectedDestinationId] = useState(destinations[0].id);
     const selectedDestination = destinations.find(dest => dest.id === selectedDestinationId);
 
+    // use scanned data from route.params
+    const {seatNumber: initialSeatNumber} = route.params || {};
+    const [seatNumber, setSeatNumber] = useState(initialSeatNumber || '');
+
     return(
         <ScrollView style={styles.container}>
             <Text style={styles.title}>Evpay Payment</Text>
@@ -23,6 +27,8 @@ const FarePaymentScreen = ({navigation, route}) => {
             <Text style={styles.inputText}>Seat Number</Text>
             <TextInput
                 style={styles.input}
+                value={seatNumber}
+                onChangeText={setSeatNumber}
             />
 
             <Text style={styles.inputText}>Name</Text>

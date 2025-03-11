@@ -1,12 +1,9 @@
 import React from "react";
 import {View, Text, StyleSheet, Button} from 'react-native';
 import { PanGestureHandler } from "react-native-gesture-handler";
+import QRCodeScanButton from "../components/QRCodeScanButton";
 
 const HomeScreen = ({ navigation }) => {
-    // Handlers for button clicks
-    const handleEVOwners = () => {
-        navigation.navigate('EVOwners');
-    }
 
     const handleGesture = (event) => {
       const {translationX, translationY} = event.nativeEvent;
@@ -24,20 +21,18 @@ const HomeScreen = ({ navigation }) => {
       }
     }
 
-    const handleEVPassengers = () => {
-        navigation.navigate('EVPassengers');
-    }
-
     return (
     <PanGestureHandler onGestureEvent={handleGesture}>
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {/* {<Text style={styles.backButton} onPress={() => navigation.goBack()}>&larr;</Text>} */}
-        <View style={styles.titleBorder}>
-        <Text style={styles.title}>EVPay</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          {/* {<Text style={styles.backButton} onPress={() => navigation.goBack()}>&larr;</Text>} */}
+          <View style={styles.titleBorder}>
+            <Text style={styles.title}>EVPay</Text>
+          </View>
+          {/* QR scan button positioned at the top right */}
+          <QRCodeScanButton navigation={navigation}/>
+        </View>
       </View>
-      </View>
-    </View>
     </PanGestureHandler>
     );
 };
@@ -50,10 +45,8 @@ const styles = StyleSheet.create({
     },
     header: {
       padding: 20,
-      //backgroundColor: '#50ff50',
       alignItems: 'center',
-      // justifyContent: 'center',
-      // alignItems: 'center',
+      justifyContent: 'center',
     },
     title: {
       fontSize: 24,
@@ -66,11 +59,6 @@ const styles = StyleSheet.create({
       borderColor: '#50ff50',
       padding:20,
       marginTop: 180,
-    },
-    main: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
   });
   

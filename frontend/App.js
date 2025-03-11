@@ -11,6 +11,7 @@ import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import EditProfileScreen from './src/screens/Profile/EditProfileScreen';
 import AllActivitiesScreen from './src/screens/Profile/AllActivitiesScreen';
 import FarePaymentScreen from './src/screens/Payments/FarePaymentScreen';
+import QRScannerScreen from './src/screens/Payments/QRScannerScreen';
 import { ActivityIndicator, View } from 'react-native';
 import { API_BASE_URL } from "@env";
 
@@ -67,7 +68,7 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'>
+      <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name='UserScreen' component={UserScreen}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>
           <Stack.Screen name='EditProfile' component={EditProfileScreen}/>
@@ -76,6 +77,7 @@ export default function App() {
           <Stack.Screen name='Register' component={RegisterScreen}/>
           <Stack.Screen name='AllActivities' component={AllActivitiesScreen}/>
           <Stack.Screen name='FarePayment' component={FarePaymentScreen}/>
+          <Stack.Screen name='QRScanner' component={QRScannerScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
