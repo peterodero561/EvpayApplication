@@ -2,9 +2,14 @@
 
 # dependencies
 node_modules/
+package-lock.json
+yarn.lock
 
 # Expo
 .expo/
+.expo-shared/
+.expo-cache/
+.web-build/
 dist/
 web-build/
 expo-env.d.ts
@@ -35,5 +40,17 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-app-example
+# Android & iOS generated files
+android/.gradle/
+android/app/build/
+ios/Pods/
+ios/build/
+ios/*.xcworkspace/
+
+
+# Environment variables & secrets
 .env
+.env.local
+.env.production
+.env.development
+app-example

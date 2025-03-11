@@ -1,1 +1,21 @@
+# Python virtual environment
+venv/
 .env
+.env.local
+.env.production
+.env.development
+
+# Bytecode and cahed files
+__pycache__/
+*.pyc
+*.pyo
+
+# Flask
+config.py
+
+# Logs and temp files
+logs/
+*.log
+*.pid
+*.out
+*.bak
