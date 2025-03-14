@@ -6,7 +6,7 @@ const QRCodeScanButton = ({ navigation }) => {
     return(
         <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("QRScannerScreen")}
+            onPress={() => navigation.navigate("QRScanner")}
         >
             <Iconicons name="qr-code-outline" size={30} color="#000"/>
         </TouchableOpacity>
