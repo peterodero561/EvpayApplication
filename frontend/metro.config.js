@@ -1,9 +1,10 @@
-const { getDefaultConfig } = require('expo/metro-config');
+const { getDefaultConfig } = require("@react-native/metro-config");
 
-module.exports = (async () => {
-  const config = await getDefaultConfig(__dirname);
+const defaultConfig = getDefaultConfig(__dirname);
 
-  //extra
-  config.resolver.assetExts = [...config.resolver.assetExts, "jpg", "jpeg", "png", "svg"];
-  return config;
-})();
+module.exports = {
+  ...defaultConfig,
+  resolver: {
+    sourceExts: [...defaultConfig.resolver.sourceExts, "cjs"],
+  },
+};
