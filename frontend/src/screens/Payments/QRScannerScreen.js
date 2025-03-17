@@ -43,7 +43,7 @@ const QRScannerScreen = ({ navigation }) => {
             <CameraView
                 style={StyleSheet.absoluteFillObject}
                 onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-                barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+                barcodeScannerSettings={{ barcodeTypes: ["qr", "pdf417"] }}
             >
                 <View style={styles.overlay}>
                     <Text style={styles.overlayText}>Scan QR Code</Text>
