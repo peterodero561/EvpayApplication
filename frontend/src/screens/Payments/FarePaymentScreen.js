@@ -17,8 +17,8 @@ const FarePaymentScreen = ({navigation, route}) => {
     const selectedDestination = destinations.find(dest => dest.id === selectedDestinationId);
 
     // use scanned data from route.params
-    const {seatNumber: initialSeatNumber} = route.params || {};
-    const [seatNumber, setSeatNumber] = useState(initialSeatNumber || '');
+    const {seat: initialSeat} = route.params || {};
+    const [seatNumber, setSeatNumber] = useState(initialSeat || '');
 
     return(
         <ScrollView style={styles.container}>
@@ -26,9 +26,10 @@ const FarePaymentScreen = ({navigation, route}) => {
 
             <Text style={styles.inputText}>Seat Number</Text>
             <TextInput
-                style={styles.input}
-                value={seatNumber}
-                onChangeText={setSeatNumber}
+                style={[styles.input, styles.disabledInput]}
+                value={seatNumber?.toString()}
+                editable={false}
+                selectTextOnFocus={false}
             />
 
             <Text style={styles.inputText}>Name</Text>
@@ -59,11 +60,18 @@ const FarePaymentScreen = ({navigation, route}) => {
                         key={index}
                         style={styles.radioButton}
                         onPress={() => setSelectedMethod(method)}
+                        activeOpacity={0.7}
                     >
-                        <View style={styles.radioOuter}>
+                        <View style={[
+                            styles.radioOuter,
+                            selectedMethod === method && styles.radioOuterSelected
+                        ]}>
                             {selectedMethod === method && <View style={styles.radioInner}/>}
                         </View>
-                        <Text style={styles.radioText}>{method}</Text>
+                        <Text style={[
+                            styles.radioText,
+                            selectedMethod === method && styles.radioTextSelected
+                        ]}>{method}</Text>
                     </TouchableOpacity>
                 ))}
             </View>
@@ -126,25 +134,39 @@ const styles = StyleSheet.create({
     radioButton: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: 15,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        backgroundColor: '#fff'
     },
     radioOuter: {
         width: 24,
         height: 24,
         borderRadius: 12,
-        borderColor: "#007bff",
+        borderColor: "#888",
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 10,
+        marginRight: 15,
+    },
+    radioOuterSelected: {
+        borderColor: '#007bff',
     },
     radioInner: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
+        width: 14,
+        height: 14,
+        borderRadius: 7,
         backgroundColor: "#007bff",
     },
     radioText: {
         fontSize: 18,
+        color: '#666',
+    },
+    radioOuterSelected: {
+        color: '#007bff',
+        fontWeight: '600',
     },
     payButton: {
         backgroundColor: "#50ff50",
