@@ -1,7 +1,6 @@
 import React, { useEffect, useState} from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
-import { Camera } from "expo-camera";
-import { CameraView } from "expo-camera";
+import { Camera, CameraView } from "expo-camera";
 
 
 const QRScannerScreen = ({ navigation }) => {
@@ -12,19 +11,23 @@ const QRScannerScreen = ({ navigation }) => {
         const getCameraPermission = async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === 'granted');
+            console.log("Camera permission status: ", status);
         };
         getCameraPermission();
     }, []);
 
     const handleBarCodeScanned = ({ type, data}) => {
+        console.log("Qr code scanned - Type: ", type, "Data: ", data);
         setScanned(true);
         // scanned QRcode will have info
         try{
             const scannedData = JSON.parse(data);
+            console.log("parsed data: ", { seat: scannedData });
             navigation.navigate("FarePayment", scannedData);
         } catch (error){
-            console.error("Error acessing JSON data: ", error);
-            return
+            console.error("Parse Error: ", error);
+            console.error("RAW DATA THAT FAILED: ", data);
+            setTimeout(() => setScanned(false), 5000);
         }
     };
 
@@ -39,12 +42,13 @@ const QRScannerScreen = ({ navigation }) => {
         <View style={styles.container}>
             <CameraView
                 style={StyleSheet.absoluteFillObject}
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                barcodeScannerSettings={{
-                    barCodeTypes: ["qr", "pdf417"],
-                }}
+                onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+                barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
             >
-                <View style={styles.buttonConainer}>
+                <View style={styles.overlay}>
+                    <Text style={styles.overlayText}>Scan QR Code</Text>
+                </View>
+                <View style={styles.buttonContainer}>
                     <Button title="Cancel" onPress={() => navigation.goBack()}/>
                 </View>
             </CameraView>
@@ -58,13 +62,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    buttonConainer: {
+    buttonContainer: {
         position: "absolute",
         bottom: 20,
         alignSelf: "center",
         backgroundColor: '#50ff50',
         color: 'black',
         fontWeight: 'bold'
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    overlayText: {
+        color: "white",
+        fontSize: 20,
     },
 });
 
