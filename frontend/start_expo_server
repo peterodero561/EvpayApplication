@@ -1,0 +1,12 @@
+#!/bin/bash
+# Load variables
+source .env
+
+# source nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # loads nvm
+
+# use Node 18
+nvm use 18
+# start server and clear cache
+npx expo start -c
