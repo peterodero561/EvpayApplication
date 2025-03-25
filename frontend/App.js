@@ -12,6 +12,7 @@ import EditProfileScreen from './src/screens/Profile/EditProfileScreen';
 import AllActivitiesScreen from './src/screens/Profile/AllActivitiesScreen';
 import FarePaymentScreen from './src/screens/Payments/FarePaymentScreen';
 import QRScannerScreen from './src/screens/Payments/QRScannerScreen';
+import ConfirmationScreen from './src/screens/Payments/ConfirmationScreen';
 import { ActivityIndicator, View } from 'react-native';
 import { API_BASE_URL } from "@env";
 
@@ -78,6 +79,7 @@ export default function App() {
           <Stack.Screen name='AllActivities' component={AllActivitiesScreen}/>
           <Stack.Screen name='FarePayment' component={FarePaymentScreen}/>
           <Stack.Screen name='QRScanner' component={QRScannerScreen}/>
+          <Stack.Screen name='Confirm' component={ConfirmationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
