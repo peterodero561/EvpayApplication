@@ -1,6 +1,5 @@
 import React, {use, useState} from "react";
-import { Button, Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import Constants from 'expo-constants';
+import { Button, Text, View, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
 
@@ -11,10 +10,11 @@ const RegisterScreen = ({navigation}) => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
-        {label: 'Garage Manager', value: 'garage manager'},
+        {label: 'Garage Manager', value: 'manager'},
         {label: 'Driver', value: 'driver'},
         {label: 'Passenger', value: 'user'},
     ])
@@ -25,15 +25,26 @@ const RegisterScreen = ({navigation}) => {
             alert('There is a mismatch in password');
             return
         }
+
+        // payload for backend
+        const userData = {email, name, password, role: value, ...(value !== 'user' && { number: phoneNumber})};
+
         try{
-            const response = await axios.post(
-                `${API_BASE_URL}/api/auth/register_user`,
-                { email, name, password },
-                { headers: {"Content-Type": "application/json"}}
-            )
-            
-            // show sucess message
-            alert(response.data.message);
+            let url;
+            if (value) {
+                url = `${API_BASE_URL}/api/auth/register_${value}`;
+            } else {
+                alert("Please select designation");
+                return;
+            }
+
+            const response = await axios.post(url, userData,{ headers: {"Content-Type": "application/json"}});
+
+            if (response.status === 200){
+                // show sucess message
+                alert(response.data.message);
+                navigation.navigate("Login")
+            }
         } catch(error) {
             console.log("Registering error, ", error);
             alert ("Something Went wrong in Registering! Please try again");
@@ -42,7 +53,7 @@ const RegisterScreen = ({navigation}) => {
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} nestedScrollEnabled={true}>
             <Text style={styles.title}>Evpay</Text>
             <Text style={styles.message}>
                 Create your account
@@ -75,7 +86,23 @@ const RegisterScreen = ({navigation}) => {
                 setValue={setValue}
                 setItems={setItems}
                 style={styles.dropdown}
+                listMode="SCROLLVIEW"
+                scrollViewProps={{nestedScrollEnabled: true}}
             />
+
+            {/* Conditionaly render phone number input */}
+            {(value === 'driver' || value === 'manager') && (
+                <>
+                    <Text style={styles.phone}>Phone Number</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter phone number"
+                        keyboardType="phone-pad"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                    />
+                </>
+            )}
 
             <Text style={styles.password}>Create User Password</Text>
             <TextInput
@@ -99,16 +126,14 @@ const RegisterScreen = ({navigation}) => {
             <TouchableOpacity style={styles.createButton}>
                 <Text style={styles.createButtonText} onPress={handleCreateAccount}>Create account</Text>
             </TouchableOpacity>
-
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 20,
-        justifyContent: 'top',
     },
     title: {
         fontSize: 28,
@@ -144,6 +169,11 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 10,
     },
+    phone: {
+        fontSize: 18,
+        marginBottom: 10,
+        marginTop: 20,
+    },
     createButton: {
         backgroundColor: '#50ff50',
         borderRadius: 20,
@@ -157,7 +187,8 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         borderWidth: 1,
-        borderRadius: 5
+        borderRadius: 10,
+        borderColor: '#ccc',
     }
 });
 
