@@ -1,16 +1,71 @@
-import React, {cloneElement, use, useState} from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, {useEffect, useState} from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { API_BASE_URL } from "@env"
 import Footer from "../../components/Footer";
 import SlidingMenu from "../../components/SlidingMenu";
+import axios from "axios";
 
 const ProfileScreen = ({navigation, route}) => {
-    // user from UserScreen
+    // user from UserScreen 
     const { user } = route.params;
     const [menuVisible, setMenuVisible] = useState(false);
     const toggleMenu = () => setMenuVisible(!menuVisible);
+    const [additionalData, setAdditionalData] = useState(null);
+    const [phoneNumber, setPhoneNumber] = useState(null);
+    const [loading, setLoading] = useState(false);
     const profilePic = user?.userProfilePic ? { uri: `${API_BASE_URL}/static/images/profiles/${user.userProfilePic}` } : require('../../../assets/default.jpg');
 
+    // fetch data accoring to role of user logged in
+    useEffect(() => {
+        const fetchRoleData = async () => {
+            setLoading(true);
+            try {
+                if (user.userRole === 'driver') {
+                    const response = await axios.get(`${API_BASE_URL}/api/profiles/driver_bus/${user.userId}`);
+                    setAdditionalData(response.data);
+                } else if (user.userRole === 'garage manager') {
+                    const response = await axios.get(`${API_BASE_URL}/api/profiles/manager_garage/${user.userId}`);
+                    setAdditionalData(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching role data: ', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user.userRole !== 'user') { fetchRoleData() }
+    }, [user]);
+    
+    const renderRoleSpecificSection = () => {
+        if (loading) return <ActivityIndicator size='large' color="0000ff" />;
+        if (!additionalData) return null;
+
+        switch (user.userRole){
+            case 'driver':
+                return (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Bus Information</Text>
+                        <Text style={styles.info}>Bus Model: {additionalData.busModel}</Text>
+                        <Text style={styles.info}>Bus plate number: {additionalData.busPlateNo}</Text>
+                        <Text style={styles.info}>Bus batery model: {additionalData.busBatteryModel}</Text>
+                        <Text style={styles.info}>Bus baterry company: {additionalData.busBatteryCompany}</Text>
+                        <Text style={styles.info}>Bus Seats: {additionalData.busSeatsNo}</Text>
+                    </View>
+                );
+            case 'garage manager':
+                return(
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Garage Information</Text>
+                        <Text style={styles.info}>Garage name: {additionalData.garName}</Text>
+                        <Text style={styles.info}>Garage Location: {additionalData.garLocation}</Text>
+                        <Text style={styles.info}>Garage Services: {additionalData.garServices}</Text>
+                    </View>
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -22,10 +77,14 @@ const ProfileScreen = ({navigation, route}) => {
             <Image source={profilePic} style={styles.profile}></Image>
 
             <View style={styles.profileInfo}>
+                <Text style={styles.sectionTitle}>Profile Information</Text>
                 <Text style={styles.info}>Name: {user?.userName} </Text>
                 <Text style={styles.info}>Email: {user?.userEmail} </Text>
                 <Text style={styles.info}>Designation: {user?.userRole} </Text>
             </View>
+
+            {/* fetch data according to role */}
+            {renderRoleSpecificSection()}
 
             <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile', {user:user})}>
                 <Text style={styles.editButtonText}>Edit Profile</Text>
@@ -56,14 +115,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 16,
-
     },
     profile: {
         width: 150,
         height: 150,
         borderRadius: 15,
         alignSelf: 'center',
-        marginBottom: 30,
+        marginBottom: 10,
     },
     profileInfo: {
         marginVertical: 16,
@@ -93,6 +151,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
+    section: {
+        marginVertical: 16,
+        backgroundColor: '#e0e0e0',
+        padding: 16,
+        borderRadius: 10,
+        width: '100%'
+    },
+    sectionTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 12,
+        color: '#333'
+    }
 });
 
 export default ProfileScreen;
