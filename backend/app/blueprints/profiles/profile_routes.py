@@ -24,7 +24,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @profiles_bp.route('/user_profile', methods=['GET'], strict_slashes=False)
-@login_required
 def user_profile():
     '''method to serve user home page'''
     if current_user.user_role != 'user':
@@ -32,7 +31,6 @@ def user_profile():
     return render_template('passengers_home.html', user=current_user)
 
 @profiles_bp.route('/driver_profile', strict_slashes=False, methods=['GET'])
-@login_required
 def driver_profile():
     '''method to serve driver home page'''
     if current_user.user_role != 'driver':
@@ -40,7 +38,6 @@ def driver_profile():
     return render_template('owners_home.html', driver=current_user)
 
 @profiles_bp.route('/manager_profile', methods=['GET'], strict_slashes=False)
-@login_required
 def manager_profile():
     '''method to serve manager home page'''
     if current_user.user_role != 'garage manager':
@@ -48,7 +45,6 @@ def manager_profile():
     return render_template('manager_home.html', manager=current_user)
 
 @profiles_bp.route('/garage_setup_page', methods=['GET'], strict_slashes=False)
-@login_required
 def garage_setup_page():
     '''Method to serrve the garage setup page'''
     if current_user.user_role != 'garage manager':
@@ -56,13 +52,11 @@ def garage_setup_page():
     return render_template('garage_setup.html', manager=current_user)
 
 @profiles_bp.route('/account', methods=['GET'], strict_slashes=False)
-@login_required
 def account():
     '''Serves the profile page for users'''
     return render_template('profile.html', user=current_user)
 
 @profiles_bp.route('/account_data', methods=['GET'], strict_slashes=False)
-@login_required
 def account_data():
     '''return current user information'''
     return jsonify(current_user.to_dict())
@@ -130,24 +124,20 @@ def account_update():
         
 
 @profiles_bp.route('/battery_charge', strict_slashes=False, methods=['GET'])
-@login_required
 def battery_charge():
     '''serves the charge page'''
     return render_template('battery_charging.html')
 
 @profiles_bp.route('/battery_maintanance', strict_slashes=False, methods=['GET'])
-@login_required
 def battery_maintain():
     '''serve battery maintenace page'''
     return render_template('battery_maintanance.html')
 
 
-@profiles_bp.route('/account_bus', strict_slashes=False, methods=['GET'])
-@login_required
-def account_bus():
+@profiles_bp.route('/driver_bus/<int:id>', strict_slashes=False, methods=['GET'])
+def account_bus(id):
     '''Returns information about a bus of a given driver'''
-    user_id = current_user.user_id
-    driver = Driver.query.filter_by(user_id=user_id).first()
+    driver = Driver.query.filter_by(user_id=id).first()
     driver_id = driver.driver_id
     bus = Bus.query.filter_by(driver_id=driver_id).first()
     if bus:
@@ -155,8 +145,7 @@ def account_bus():
     else:
         return jsonify({'busId': 'Null'})
     
-@profiles_bp.route('/account_bus_update', strict_slashes=False, methods=['PUT'])
-@login_required
+@profiles_bp.route('/driver_bus_update', strict_slashes=False, methods=['PUT'])
 def account_bus_update():
     '''Updates information about Bus'''
     if request.method == 'PUT':
@@ -189,20 +178,16 @@ def account_bus_update():
     return jsonify({'status': 'error', 'code': 403, 'message': 'Bad request'})
 
 
-@profiles_bp.route('/account_garage', methods=['GET'], strict_slashes=False)
-@login_required
-def account_garage():
-    if request.method == 'GET':
-        user_id = current_user.user_id
-        garageManager = GarageManager.query.filter_by(user_id=user_id).first()
-        garageManagerID = garageManager.managerId
-        garage = Garage.query.filter_by(managerId=garageManagerID).first()
+@profiles_bp.route('/manager_garage/<int:id>', methods=['GET'], strict_slashes=False)
+def account_garage(id):
+    garageManager = GarageManager.query.filter_by(user_id=id).first()
+    garageManagerID = garageManager.managerId
+    garage = Garage.query.filter_by(managerId=garageManagerID).first()
 
-        if garage:
-            return jsonify(garage.to_dict()), 200
-        else:
-            return jsonify({'garId': 'Null'}), 403
-    return jsonify({'status': 'error', 'message': 'Bad request'}), 403
+    if garage:
+        return jsonify(garage.to_dict()), 200
+    else:
+        return jsonify({'garId': 'Null'}), 403
 
 @profiles_bp.route('/activities', methods=['GET'], strict_slashes=False)
 @jwt_required()

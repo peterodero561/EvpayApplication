@@ -177,7 +177,7 @@ def register_driver():
             new_driver = Driver(name=name, email=email, number=no, passwd=passwd, user_id=user.user_id)
             db.session.add(new_driver)
             db.session.commit()
-            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In'}), 200
+            return jsonify({'status': 'success', 'message': 'You have successfully registered. Sign In'}), 200
         except IntegrityError:
             db.session.rollback()
             return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details'}), 403
@@ -212,7 +212,7 @@ def register_manager():
             new_garage_manager = GarageManager(name=name, email=email, number=no, user_id=user.user_id)
             db.session.add(new_garage_manager)
             db.session.commit()
-            return jsonify({'status': 'success', 'message': 'You have successfully registered. Procced to Sign In'}), 200
+            return jsonify({'status': 'success', 'message': 'You have successfully registered. Sign In'}), 200
         except IntegrityError:
             db.session.rollback()
             return jsonify({'status': 'error', 'message': 'An Intergity error occurred during registration. Please try again, with unique details'}), 403
