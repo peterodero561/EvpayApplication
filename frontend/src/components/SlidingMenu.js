@@ -21,7 +21,7 @@ const SlidingMenu = ({ menuVisible, toggleMenu, user, navigation }) => {
     const menuOptions = [
         {id: 1, title: "Evpay Bus Locator", roles: ['user', 'driver'], screen: "BusLocator"},
         {id: 2, title: "Garages", roles: ["driver", 'garage manager'], screen: "Garage"},
-        {id: 3, title: "Payment", roles: ["user", "driver", "garage manager"], screen: "FarePayment"},
+        {id: 3, title: "Payment", roles: ["user", "driver", "garage manager"], screen: "Payment"},
     ];
 
     return(
