@@ -21,6 +21,7 @@
     "axios": "^1.7.9",
     "expo": "~52.0.23",
     "expo-barcode-scanner": "^13.0.1",
+    "expo-camera": "~16.0.18",
     "expo-image-picker": "~16.0.6",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
@@ -36,10 +37,10 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.13",
+    "socket.io-client": "^4.8.1",
     "undici": "^7.2.1",
     "uuid": "^11.1.0",
-    "web-streams-polyfill": "^4.1.0",
-    "expo-camera": "~16.0.18"
+    "web-streams-polyfill": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
