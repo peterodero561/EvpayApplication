@@ -221,7 +221,6 @@ def register_manager():
         
 
 @auth_bp.route('/register_bus', strict_slashes=False, methods=['POST'])
-@login_required
 def register_bus():
     '''methods to record a bus in the table'''
     if request.method == 'POST':

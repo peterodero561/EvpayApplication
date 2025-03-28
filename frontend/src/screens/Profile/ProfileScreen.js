@@ -23,6 +23,7 @@ const ProfileScreen = ({navigation, route}) => {
                 if (user.userRole === 'driver') {
                     const response = await axios.get(`${API_BASE_URL}/api/profiles/driver_bus/${user.userId}`);
                     setAdditionalData(response.data);
+                    console.log(response.data);
                 } else if (user.userRole === 'garage manager') {
                     const response = await axios.get(`${API_BASE_URL}/api/profiles/manager_garage/${user.userId}`);
                     setAdditionalData(response.data);
@@ -45,21 +46,43 @@ const ProfileScreen = ({navigation, route}) => {
             case 'driver':
                 return (
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Bus Information</Text>
-                        <Text style={styles.info}>Bus Model: {additionalData.busModel}</Text>
-                        <Text style={styles.info}>Bus plate number: {additionalData.busPlateNo}</Text>
-                        <Text style={styles.info}>Bus batery model: {additionalData.busBatteryModel}</Text>
-                        <Text style={styles.info}>Bus baterry company: {additionalData.busBatteryCompany}</Text>
-                        <Text style={styles.info}>Bus Seats: {additionalData.busSeatsNo}</Text>
+                        <View style={styles.sectionTitleRow}>
+                            <Text style={styles.sectionTitle}>Bus Information</Text>
+                            <TouchableOpacity onPress={() => navigation.navigate("BusInformation", {user: user, isEdit: !additionalData.message})}>
+                                <Text style={styles.addOrEdit}>{additionalData.message ? 'Add' : 'Edit'} Bus Info</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {additionalData.message ? (
+                            <Text style={styles.info}>{additionalData.message}</Text>
+                        ) : (
+                            <>
+                                <Text style={styles.info}>Bus Model: {additionalData.busModel}</Text>
+                                <Text style={styles.info}>Bus plate number: {additionalData.busPlateNo}</Text>
+                                <Text style={styles.info}>Bus batery model: {additionalData.busBatteryModel}</Text>
+                                <Text style={styles.info}>Bus baterry company: {additionalData.busBatteryCompany}</Text>
+                                <Text style={styles.info}>Bus Seats: {additionalData.busSeatsNo}</Text>
+                            </>
+                        )}
                     </View>
                 );
             case 'garage manager':
                 return(
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Garage Information</Text>
-                        <Text style={styles.info}>Garage name: {additionalData.garName}</Text>
-                        <Text style={styles.info}>Garage Location: {additionalData.garLocation}</Text>
-                        <Text style={styles.info}>Garage Services: {additionalData.garServices}</Text>
+                        <View style={styles.sectionTitleRow}>
+                            <Text style={styles.sectionTitle}>Garage Information</Text>
+                            <TouchableOpacity onPress={() => navigation.navigate("GarageInformation", { user: user, isEdit: !additionalData.message})}>
+                                <Text style={styles.addOrEdit}>{additionalData.message ? 'Add' : 'Edit'} Garage Info</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {additionalData.message ? (
+                            <Text style={styles.info}>{additionalData.message}</Text>
+                        ) : (
+                            <>
+                                <Text style={styles.info}>Garage name: {additionalData.garName}</Text>  
+                                <Text style={styles.info}>Garage Location: {additionalData.garLocation}</Text>
+                                <Text style={styles.info}>Garage Services: {additionalData.garServices}</Text>  
+                            </>
+                        )}
                     </View>
                 );
             default:
@@ -163,7 +186,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 12,
         color: '#333'
-    }
+    },
+    sectionTitleRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: "center"
+    },
+    addOrEdit: {
+        fontSize: 18,
+        color: "#0000ff"
+    },
 });
 
 export default ProfileScreen;

@@ -143,7 +143,7 @@ def account_bus(id):
     if bus:
         return jsonify(bus.to_dict())
     else:
-        return jsonify({'busId': 'Null'})
+        return jsonify({'message': 'No bus information found'})
     
 @profiles_bp.route('/driver_bus_update', strict_slashes=False, methods=['PUT'])
 def account_bus_update():
