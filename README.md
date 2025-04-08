@@ -24,20 +24,66 @@ EvpayApplication/
 #### 2. Backend (Flask)
 
 ```
-backend/
+django_backend/
 │
-├── app/                    # Main backend application
-│   ├── models/             # Database models (User, Driver, Bus, Garage, GarageManager)
-│   ├── blueprints/         # Feature-based API routes
-│   │   ├── auth/           # Authentication module
-│   │   ├── profiles/       # User and driver profiles
-│   │   ├── payments/       # Payment system
-│   ├── extensions.py       # Flask extensions
-├── migrations/             # Database migration files
-├── tests/                  # Unit and integration tests
-├── config.py               # App configurations(Prod, Test)
-├── manage.py               # commands to start the backend
-├── requirements.txt        # Python dependencies
+├── README.md
+├── requirements.txt
+├── start_django_server
+│
+├── backend/                      # Main project folder
+│   ├── manage.py
+│   ├── media/                    # For user-uploaded files
+│   │
+│   ├── backend_dir/             # Django settings and project-level
+│   │   ├── __init__.py
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │
+│   ├── core/                    # Your main app with models
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations/
+│   │   ├── models/
+│   │   │   ├── __init__.py     
+│   │   │   ├── activity.py
+│   │   │   ├── bus.py
+│   │   │   ├── driver.py
+│   │   │   ├── garage.py
+│   │   │   ├── manager.py
+│   │   │   ├── transaction.py
+│   │   │   ├── user.py
+│   │   ├── tests.py
+│   │   ├── views.py
+│   │
+│   ├── custom_auth/             # Authentication-related logic
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── tests.py
+│   │
+│   ├── payments/                # Payment gateway and billing
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── tests.py
+│   │
+│   ├── profiles/                # User profile logic and APIs
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── tests.py
 ```
 
 #### 3. Frontend(React Native)
@@ -62,7 +108,7 @@ frontend/
 1. Clone repo
 ``` sh
 git clone https://github.com/peterodero561/EvpayApplication.git
-cd EvpayApplication/backend
+cd EvpayApplication/django_backend
 ```
 
 2. Create and activate virtual environment
@@ -79,14 +125,15 @@ pip install -r requirements.txt
 
 4. Set up database
 ```sh
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
+# Ensure you have MySQL installed
+cd Evpay/django_backend/backend
+python3 manage.py makemigrations
+python3 manage.py migrate
 ```
 
 5. Run backend server
 ```sh
-flask run --host=0.0.0.0 --port=5000 # or python3 manage_app.py; Get the URL to set up in frontend 
+python3 manage.py runserver
 ```
 
 
@@ -105,7 +152,7 @@ npm install -g expo-cli
 3. Setup API_BASE_URL
 ```sh
 cd EvpayApplication/frontend
-echo 'API_BASE_URL=http://your_pc_address' > .env # The one found after running flask server eg. 192.168.10.10
+echo 'API_BASE_URL=http://your_pc_address' > .env # The one found after running Django server eg. 192.168.10.10
 source .env # So that the environmental variables are updated
 ```
 
@@ -121,11 +168,7 @@ npx expo start
 
 
 ## Pytest unit tests
-```
-cd backend
-source evpay/bin/activate
-pip3 install pytest
-evpay/bin/python3 -m pytest
+```sh
 ```
 # Contact
 For queries, contact Peter Odero at peterodero561@gmail.com
