@@ -21,7 +21,7 @@ EvpayApplication/
  |--README.md
 ```
 
-#### 2. Backend (Flask)
+#### 2. Backend (Django)
 
 ```
 django_backend/
